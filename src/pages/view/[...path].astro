@@ -1,0 +1,32 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Sidebar from '../../components/Sidebar.astro';
+import { getAllPrototypePaths, getPrototypeTree, formatName } from '../../lib/prototypes';
+
+export function getStaticPaths() {
+  return getAllPrototypePaths();
+}
+
+const { path } = Astro.params;
+const tree = getPrototypeTree();
+const iframeSrc = `/prototypes/${path}.html`;
+
+const segments = path!.split('/');
+const currentFile = segments[segments.length - 1];
+const displayName = formatName(currentFile);
+---
+
+<Layout title={displayName}>
+  <div class="app-shell">
+    <Sidebar tree={tree} currentSlug={path!} />
+    <main class="viewer">
+      <div class="viewer-toolbar">
+        <span class="viewer-path">{path}</span>
+        <a href={iframeSrc} target="_blank" rel="noopener" class="open-external">
+          Open in new tab &#8599;
+        </a>
+      </div>
+      <iframe src={iframeSrc} title={displayName}></iframe>
+    </main>
+  </div>
+</Layout>
