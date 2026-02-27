@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Edit - Prototype C (Pill Badges + Icon Banners)</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23EC4899' width='100' height='100'/><text x='50' y='72' font-size='70' font-weight='bold' text-anchor='middle' fill='white'>1</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e8e8e8;
+            color: #333;
+            min-height: 200vh;
+        }
+        
+        /* Header */
+        .header {
+            background-color: white;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .logo-accent {
+            color: #39C463;
+        }
+        
+        .avatar-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid #39C463;
+        }
+        
+        .avatar-button .material-icons {
+            color: #666;
+            font-size: 24px;
+        }
+        
+        /* Page Header */
+        .page-header {
+            background: #000;
+            color: white;
+            padding: 48px 32px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .page-title {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .page-accent {
+            color: #39C463;
+        }
+        
+        .page-subtitle {
+            font-size: 16px;
+            color: #999;
+        }
+        
+        /* Main Tabs */
+        .main-tabs-wrapper {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            position: sticky;
+            top: 72px;
+            z-index: 90;
+        }
+        
+        .main-tabs {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            padding: 0 32px;
+        }
+        
+        .main-tab {
+            padding: 18px 24px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.2s;
+            background: transparent;
+            border-left: none;
+            border-right: none;
+            border-top: none;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .main-tab:hover {
+            color: #39C463;
+        }
+        
+        .main-tab.active {
+            color: #39C463;
+            border-bottom-color: #39C463;
+        }
+        
+        /* Content Layout */
+        .content-area {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px;
+            display: flex;
+            gap: 32px;
+            align-items: flex-start;
+        }
+        
+        /* Sticky Sidebar */
+        .sidebar {
+            width: 300px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 140px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        /* Company Selector */
+        .company-selector {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            background: #fafafa;
+        }
+        
+        .company-selector-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #999;
+            margin-bottom: 12px;
+        }
+        
+        .company-dropdown {
+            position: relative;
+        }
+        
+        .company-dropdown-trigger {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        
+        .company-dropdown-trigger:hover {
+            border-color: #39C463;
+        }
+        
+        .company-dropdown-trigger.open {
+            border-color: #39C463;
+            box-shadow: 0 0 0 3px rgba(57, 196, 99, 0.1);
+        }
+        
+        .company-logo-small {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        
+        .company-dropdown-info {
+            flex: 1;
+            text-align: left;
+            min-width: 0;
+        }
+        
+        .company-dropdown-name {
+            font-weight: 600;
+            font-size: 13px;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .company-dropdown-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 2px;
+        }
+        
+        .company-dropdown-role {
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .company-dropdown-trigger .material-icons.chevron {
+            color: #666;
+            font-size: 20px;
+            transition: transform 0.2s;
+        }
+        
+        .company-dropdown-trigger.open .material-icons.chevron {
+            transform: rotate(180deg);
+        }
+        
+        /* Type Badges - Pill Style */
+        .type-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        
+        .type-badge.portfolio {
+            background: rgba(57, 196, 99, 0.15);
+            color: #2a9d4e;
+        }
+        
+        .type-badge.network {
+            background: rgba(29, 136, 194, 0.15);
+            color: #1D88C2;
+        }
+        
+        .type-badge.independent {
+            background: rgba(242, 206, 88, 0.25);
+            color: #b8860b;
+        }
+        
+        .type-badge.mentor {
+            background: rgba(238, 77, 155, 0.15);
+            color: #d63384;
+        }
+        
+        /* Company Menu */
+        .company-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s;
+            z-index: 50;
+            overflow: hidden;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .company-menu.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .company-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+            border-bottom: 1px solid #f5f5f5;
+        }
+        
+        .company-option:last-of-type {
+            border-bottom: none;
+        }
+        
+        .company-option:hover {
+            background: #f8f8f8;
+        }
+        
+        .company-option.selected {
+            background: rgba(57, 196, 99, 0.06);
+        }
+        
+        .company-option-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .company-option-name {
+            font-weight: 600;
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 2px;
+        }
+        
+        .company-option-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .company-option-role {
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .company-option-check {
+            width: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .company-option-check .material-icons {
+            font-size: 18px;
+            color: #39C463;
+        }
+        
+        /* Add Company Button */
+        .add-company-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 16px;
+            background: #fafafa;
+            border: none;
+            border-top: 1px solid #e8e8e8;
+            cursor: pointer;
+            transition: background 0.2s;
+            width: 100%;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: #39C463;
+        }
+        
+        .add-company-btn:hover {
+            background: #f0f0f0;
+        }
+        
+        .add-company-btn .material-icons {
+            font-size: 18px;
+        }
+        
+        /* Section Navigation */
+        .section-nav {
+            padding: 20px;
+        }
+        
+        .section-nav-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #999;
+            margin-bottom: 12px;
+        }
+        
+        .nav-list {
+            list-style: none;
+        }
+        
+        .nav-item {
+            margin-bottom: 4px;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            color: #666;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+            margin-left: -3px;
+        }
+        
+        .nav-link:hover {
+            background: #f5f5f5;
+            color: #39C463;
+        }
+        
+        .nav-link.active {
+            background: rgba(57, 196, 99, 0.08);
+            color: #39C463;
+            font-weight: 600;
+            border-left-color: #39C463;
+        }
+        
+        .nav-link .material-icons {
+            font-size: 20px;
+        }
+        
+        /* Permission Indicator */
+        .permission-indicator {
+            margin: 0 20px 20px;
+            padding: 10px 12px;
+            background: rgba(57, 196, 99, 0.08);
+            border-radius: 8px;
+            font-size: 12px;
+            color: #2a9d4e;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .permission-indicator .material-icons {
+            font-size: 16px;
+        }
+        
+        .permission-indicator.readonly {
+            background: rgba(102, 102, 102, 0.08);
+            color: #666;
+        }
+        
+        /* Main Form */
+        .main-form {
+            flex: 1;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 40px;
+        }
+        
+        /* Company Type Banner - Icon Style */
+        .company-type-banner {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 32px;
+        }
+        
+        .company-type-banner.portfolio {
+            background: linear-gradient(135deg, rgba(57, 196, 99, 0.08) 0%, rgba(57, 196, 99, 0.02) 100%);
+            border: 1px solid rgba(57, 196, 99, 0.2);
+        }
+        
+        .company-type-banner.network {
+            background: linear-gradient(135deg, rgba(29, 136, 194, 0.08) 0%, rgba(29, 136, 194, 0.02) 100%);
+            border: 1px solid rgba(29, 136, 194, 0.2);
+        }
+        
+        .company-type-banner.independent {
+            background: linear-gradient(135deg, rgba(242, 206, 88, 0.12) 0%, rgba(242, 206, 88, 0.04) 100%);
+            border: 1px solid rgba(242, 206, 88, 0.3);
+        }
+        
+        .company-type-banner.mentor {
+            background: linear-gradient(135deg, rgba(238, 77, 155, 0.08) 0%, rgba(238, 77, 155, 0.02) 100%);
+            border: 1px solid rgba(238, 77, 155, 0.2);
+        }
+        
+        .banner-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .banner-icon.portfolio {
+            background: rgba(57, 196, 99, 0.15);
+            color: #39C463;
+        }
+        
+        .banner-icon.network {
+            background: rgba(29, 136, 194, 0.15);
+            color: #1D88C2;
+        }
+        
+        .banner-icon.independent {
+            background: rgba(242, 206, 88, 0.25);
+            color: #b8860b;
+        }
+        
+        .banner-icon.mentor {
+            background: rgba(238, 77, 155, 0.15);
+            color: #d63384;
+        }
+        
+        .banner-icon .material-icons {
+            font-size: 24px;
+        }
+        
+        .banner-content {
+            flex: 1;
+        }
+        
+        .banner-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        
+        .banner-title.portfolio { color: #2a9d4e; }
+        .banner-title.network { color: #1D88C2; }
+        .banner-title.independent { color: #b8860b; }
+        .banner-title.mentor { color: #d63384; }
+        
+        .banner-description {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.4;
+        }
+        
+        .banner-action {
+            flex-shrink: 0;
+        }
+        
+        .banner-action a {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            background: white;
+            border: 2px solid currentColor;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        
+        .banner-action a.portfolio {
+            color: #39C463;
+        }
+        
+        .banner-action a.independent {
+            color: #b8860b;
+        }
+        
+        .banner-action a:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .banner-action a .material-icons {
+            font-size: 16px;
+        }
+        
+        /* Read-only Notice */
+        .readonly-notice {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            margin-bottom: 32px;
+        }
+        
+        .readonly-notice.visible {
+            display: flex;
+        }
+        
+        .readonly-notice .material-icons {
+            color: #6c757d;
+            font-size: 22px;
+        }
+        
+        .readonly-notice-text strong {
+            display: block;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 2px;
+        }
+        
+        .readonly-notice-text span {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        /* Form Sections */
+        .section {
+            margin-bottom: 48px;
+            scroll-margin-top: 160px;
+        }
+        
+        .section:last-of-type {
+            margin-bottom: 0;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(57, 196, 99, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .section-icon .material-icons {
+            font-size: 22px;
+            color: #39C463;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        /* Form Elements */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        
+        .form-group {
+            margin-bottom: 0;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .helper-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="url"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            background: white;
+            color: #333;
+        }
+        
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #39C463;
+            box-shadow: 0 0 0 3px rgba(57, 196, 99, 0.1);
+        }
+        
+        input:disabled,
+        select:disabled,
+        textarea:disabled {
+            background: #f5f5f5;
+            cursor: not-allowed;
+            color: #999;
+            border-color: #e8e8e8;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .char-count {
+            font-size: 12px;
+            color: #999;
+            text-align: right;
+            margin-top: 6px;
+        }
+        
+        /* Read-Only Fields - Banner Style */
+        .readonly-fields-banner {
+            background: linear-gradient(135deg, #f8f9fa 0%, #fff 100%);
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            position: relative;
+        }
+        
+        .readonly-fields-banner::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: #39C463;
+            border-radius: 12px 0 0 12px;
+        }
+        
+        .readonly-fields-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 16px;
+        }
+        
+        .readonly-field {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        
+        .readonly-field-icon {
+            width: 36px;
+            height: 36px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .readonly-field-icon .material-icons {
+            font-size: 18px;
+            color: #666;
+        }
+        
+        .readonly-field-content {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .readonly-field-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #999;
+            margin-bottom: 4px;
+        }
+        
+        .readonly-field-value {
+            font-size: 15px;
+            font-weight: 600;
+            color: #333;
+            word-break: break-word;
+        }
+        
+        .readonly-field-value a {
+            color: #39C463;
+            text-decoration: none;
+        }
+        
+        .readonly-field-value a:hover {
+            text-decoration: underline;
+        }
+        
+        .readonly-banner-help {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 16px;
+            border-top: 1px dashed #e0e0e0;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .readonly-banner-help a {
+            color: #39C463;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .readonly-banner-help a:hover {
+            text-decoration: underline;
+        }
+        
+        .readonly-banner-help a .material-icons {
+            font-size: 16px;
+        }
+        
+        /* Logo Upload */
+        .logo-upload-section {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 24px;
+            background: #fafafa;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .logo-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .logo-preview .logo-text {
+            color: white;
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .logo-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .logo-preview:hover .logo-overlay {
+            opacity: 1;
+        }
+        
+        .logo-overlay .material-icons {
+            color: white;
+            font-size: 24px;
+        }
+        
+        .logo-overlay span {
+            color: white;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .logo-upload-info {
+            flex: 1;
+        }
+        
+        .logo-upload-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #333;
+        }
+        
+        .logo-upload-info p {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+        
+        .btn-upload {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: white;
+            border: 2px solid #39C463;
+            color: #39C463;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .btn-upload:hover {
+            background: #39C463;
+            color: white;
+        }
+        
+        .btn-upload .material-icons {
+            font-size: 18px;
+        }
+        
+        /* Toggle Switch Style */
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: #fafafa;
+            border-radius: 10px;
+        }
+        
+        .toggle-info {
+            flex: 1;
+        }
+        
+        .toggle-info label {
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+        
+        .toggle-info .toggle-description {
+            font-size: 12px;
+            color: #666;
+            margin: 0;
+        }
+        
+        /* Custom Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            width: 52px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+        
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.3s;
+            border-radius: 28px;
+        }
+        
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: #39C463;
+        }
+        
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+        
+        .toggle-switch input:disabled + .toggle-slider {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        /* Conditional Field */
+        .conditional-field {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(57, 196, 99, 0.04);
+            border: 1px dashed #39C463;
+            border-radius: 10px;
+            opacity: 0.4;
+            pointer-events: none;
+            transition: all 0.3s;
+        }
+        
+        .conditional-field.active {
+            opacity: 1;
+            pointer-events: auto;
+            background: rgba(57, 196, 99, 0.06);
+        }
+        
+        .conditional-field label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .conditional-field label .material-icons {
+            font-size: 18px;
+            color: #39C463;
+        }
+        
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 32px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #666;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .btn-secondary:hover {
+            background: #f5f5f5;
+            border-color: #d0d0d0;
+        }
+        
+        .btn-primary {
+            background: #39C463;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2ea552;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(57, 196, 99, 0.3);
+        }
+        
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn .material-icons {
+            font-size: 18px;
+        }
+        
+        /* Design Label */
+        .design-label {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="design-label">Prototype C: Pill Badges + Icon Banners</div>
+    
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">techstars<span class="logo-accent">_</span></div>
+        <div class="avatar-button">
+            <span class="material-icons">person</span>
+        </div>
+    </header>
+    
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title">Welcome back, Cyanne<span class="page-accent">_</span></h1>
+            <p class="page-subtitle">Manage your company information</p>
+        </div>
+    </div>
+    
+    <!-- Main Tabs -->
+    <div class="main-tabs-wrapper">
+        <div class="main-tabs">
+            <button class="main-tab">Profile</button>
+            <button class="main-tab active">Companies</button>
+            <button class="main-tab">Mentorship</button>
+        </div>
+    </div>
+    
+    <!-- Content Area -->
+    <div class="content-area">
+        <!-- Sticky Sidebar -->
+        <aside class="sidebar">
+            <!-- Company Selector -->
+            <div class="company-selector">
+                <div class="company-selector-label">Editing Company</div>
+                <div class="company-dropdown">
+                    <div class="company-dropdown-trigger" onclick="toggleCompanyDropdown()">
+                        <div class="company-logo-small" id="selectedLogo" style="background: linear-gradient(135deg, #39C463 0%, #2ea552 100%);">A</div>
+                        <div class="company-dropdown-info">
+                            <div class="company-dropdown-name" id="selectedName">Acme Innovations</div>
+                            <div class="company-dropdown-meta">
+                                <span class="company-dropdown-role" id="selectedRole">CEO</span>
+                                <span class="type-badge portfolio" id="selectedBadge">Portfolio</span>
+                            </div>
+                        </div>
+                        <span class="material-icons chevron">expand_more</span>
+                    </div>
+                    <div class="company-menu" id="companyMenu">
+                        <!-- Portfolio Company -->
+                        <div class="company-option selected" onclick="selectCompany('acme', 'A', 'Acme Innovations', 'CEO', 'portfolio', '#39C463', '#2ea552')">
+                            <div class="company-logo-small" style="background: linear-gradient(135deg, #39C463 0%, #2ea552 100%);">A</div>
+                            <div class="company-option-info">
+                                <div class="company-option-name">Acme Innovations</div>
+                                <div class="company-option-meta">
+                                    <span class="company-option-role">CEO</span>
+                                    <span class="type-badge portfolio">Portfolio</span>
+                                </div>
+                            </div>
+                            <div class="company-option-check">
+                                <span class="material-icons">check</span>
+                            </div>
+                        </div>
+                        
+                        <!-- Network Company -->
+                        <div class="company-option" onclick="selectCompany('nexgen', 'N', 'NexGen Solutions', 'Founder', 'network', '#1D88C2', '#1a7ab3')">
+                            <div class="company-logo-small" style="background: linear-gradient(135deg, #1D88C2 0%, #1a7ab3 100%);">N</div>
+                            <div class="company-option-info">
+                                <div class="company-option-name">NexGen Solutions</div>
+                                <div class="company-option-meta">
+                                    <span class="company-option-role">Founder</span>
+                                    <span class="type-badge network">Network</span>
+                                </div>
+                            </div>
+                            <div class="company-option-check"></div>
+                        </div>
+                        
+                        <!-- Independent Company -->
+                        <div class="company-option" onclick="selectCompany('spark', 'S', 'Spark Ideas Co.', 'CEO', 'independent', '#F2CE58', '#e0b840')">
+                            <div class="company-logo-small" style="background: linear-gradient(135deg, #F2CE58 0%, #e0b840 100%);">S</div>
+                            <div class="company-option-info">
+                                <div class="company-option-name">Spark Ideas Co.</div>
+                                <div class="company-option-meta">
+                                    <span class="company-option-role">CEO</span>
+                                    <span class="type-badge independent">Independent</span>
+                                </div>
+                            </div>
+                            <div class="company-option-check"></div>
+                        </div>
+                        
+                        <!-- Mentor Company -->
+                        <div class="company-option" onclick="selectCompany('techcorp', 'T', 'TechCorp Industries', 'Mentor', 'mentor', '#EE4D9B', '#d63384')">
+                            <div class="company-logo-small" style="background: linear-gradient(135deg, #EE4D9B 0%, #d63384 100%);">T</div>
+                            <div class="company-option-info">
+                                <div class="company-option-name">TechCorp Industries</div>
+                                <div class="company-option-meta">
+                                    <span class="company-option-role">Mentor</span>
+                                    <span class="type-badge mentor">Mentor Co.</span>
+                                </div>
+                            </div>
+                            <div class="company-option-check"></div>
+                        </div>
+                        
+                        <!-- Add Company Button -->
+                        <button class="add-company-btn" onclick="alert('Add company flow coming soon!')">
+                            <span class="material-icons">add_circle_outline</span>
+                            Add a company
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section Navigation -->
+            <nav class="section-nav">
+                <div class="section-nav-label">Jump to Section</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#identity" class="nav-link active" onclick="scrollToSection(event, 'identity')">
+                            <span class="material-icons">fingerprint</span>
+                            Identity
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#overview" class="nav-link" onclick="scrollToSection(event, 'overview')">
+                            <span class="material-icons">info</span>
+                            Overview
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#business" class="nav-link" onclick="scrollToSection(event, 'business')">
+                            <span class="material-icons">analytics</span>
+                            Business Details
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#links" class="nav-link" onclick="scrollToSection(event, 'links')">
+                            <span class="material-icons">link</span>
+                            External Links
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <!-- Permission Indicator -->
+            <div class="permission-indicator" id="permissionIndicator">
+                <span class="material-icons">edit</span>
+                You can edit this company
+            </div>
+        </aside>
+        
+        <!-- Main Form -->
+        <main class="main-form">
+            <!-- Company Type Banner -->
+            <div class="company-type-banner portfolio" id="typeBanner">
+                <div class="banner-icon portfolio" id="bannerIcon">
+                    <span class="material-icons">school</span>
+                </div>
+                <div class="banner-content">
+                    <div class="banner-title portfolio" id="bannerTitle">Portfolio Company</div>
+                    <div class="banner-description" id="bannerDescription">Part of <strong>Techstars Boulder 2023</strong> accelerator program</div>
+                </div>
+                <div class="banner-action" id="bannerAction">
+                    <a href="#" class="portfolio">
+                        View Program
+                        <span class="material-icons">arrow_forward</span>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Identity Section -->
+            <section id="identity" class="section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <span class="material-icons">fingerprint</span>
+                    </div>
+                    <h2 class="section-title">Identity</h2>
+                </div>
+                
+                <!-- Logo Upload -->
+                <div class="logo-upload-section">
+                    <div class="logo-preview" id="logoPreview" style="background: linear-gradient(135deg, #39C463 0%, #2ea552 100%);">
+                        <span class="logo-text" id="logoText">A</span>
+                        <div class="logo-overlay">
+                            <span class="material-icons">photo_camera</span>
+                            <span>Update</span>
+                        </div>
+                    </div>
+                    <div class="logo-upload-info">
+                        <h3>Company Logo</h3>
+                        <p>Upload a JPG or PNG, 500x500px minimum, 5MB maximum.</p>
+                        <button class="btn-upload" id="uploadBtn">
+                            <span class="material-icons">upload</span>
+                            Upload Logo
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Read-Only Fields -->
+                <div class="readonly-fields-banner">
+                    <div class="readonly-fields-grid">
+                        <div class="readonly-field">
+                            <div class="readonly-field-icon">
+                                <span class="material-icons">business</span>
+                            </div>
+                            <div class="readonly-field-content">
+                                <div class="readonly-field-label">Company Name</div>
+                                <div class="readonly-field-value" id="companyNameValue">Acme Innovations</div>
+                            </div>
+                        </div>
+                        <div class="readonly-field">
+                            <div class="readonly-field-icon">
+                                <span class="material-icons">language</span>
+                            </div>
+                            <div class="readonly-field-content">
+                                <div class="readonly-field-label">Website</div>
+                                <div class="readonly-field-value">
+                                    <a href="#" target="_blank" id="websiteValue">acme-innovations.com ↗</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="readonly-banner-help">
+                        <span>These fields cannot be edited directly.</span>
+                        <a href="https://icanhas.cheezburger.com/" target="_blank">
+                            Request an update
+                            <span class="material-icons">arrow_forward</span>
+                        </a>
+                    </div>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label>Brief Description</label>
+                    <textarea id="description" placeholder="Tell us about your company in a few sentences...">We're building the future of sustainable energy solutions for residential homes, making clean power accessible and affordable for everyone.</textarea>
+                    <div class="char-count"><span id="descCharCount">142</span>/500 characters</div>
+                </div>
+            </section>
+            
+            <!-- Overview Section -->
+            <section id="overview" class="section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <span class="material-icons">info</span>
+                    </div>
+                    <h2 class="section-title">Overview</h2>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" value="Denver, Colorado, United States" placeholder="City, State, Country" />
+                    </div>
+                    <div class="form-group">
+                        <label>Year Founded</label>
+                        <input type="text" value="2022" placeholder="e.g., 2020" />
+                    </div>
+                    <div class="form-group">
+                        <label>Number of Employees</label>
+                        <input type="number" value="12" min="1" placeholder="e.g., 10" />
+                    </div>
+                    <div class="form-group">
+                        <label>Operating Status</label>
+                        <select>
+                            <option selected>🦫 Capybara (Active)</option>
+                            <option>🦝 Red Panda (Acquired)</option>
+                            <option>🐨 Quokka (On Hold)</option>
+                            <option>🦊 Fennec Fox (Pivoting)</option>
+                            <option>🦭 Axolotl (Closed)</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Business Details Section -->
+            <section id="business" class="section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <span class="material-icons">analytics</span>
+                    </div>
+                    <h2 class="section-title">Business Details</h2>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label>Vertical Network</label>
+                    <select multiple style="height: 120px;">
+                        <option selected>🧽 SpongeBob (SaaS)</option>
+                        <option selected>🐙 Squidward (Enterprise)</option>
+                        <option>⭐ Patrick (Consumer)</option>
+                        <option>🐿️ Sandy (Hardware)</option>
+                        <option>🦀 Mr. Krabs (FinTech)</option>
+                    </select>
+                    <p class="helper-text">Hold Ctrl/Cmd to select multiple options</p>
+                </div>
+                
+                <div class="form-group full-width" style="margin-top: 24px;">
+                    <div class="toggle-group">
+                        <div class="toggle-info">
+                            <label>Currently Fundraising</label>
+                            <p class="toggle-description">Toggle on if your company is actively seeking investment</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="isFundraising" checked onchange="toggleFundraising()" />
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    
+                    <div class="conditional-field active" id="fundraisingStageField">
+                        <label>
+                            <span class="material-icons">trending_up</span>
+                            Fundraising Stage
+                        </label>
+                        <input type="text" value="Seed" placeholder="e.g., Pre-Seed, Seed, Series A" style="margin-top: 8px;" />
+                    </div>
+                </div>
+            </section>
+            
+            <!-- External Links Section -->
+            <section id="links" class="section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <span class="material-icons">link</span>
+                    </div>
+                    <h2 class="section-title">External Links</h2>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>LinkedIn</label>
+                        <input type="url" value="https://linkedin.com/company/acme-innovations" placeholder="https://linkedin.com/company/..." />
+                    </div>
+                    <div class="form-group">
+                        <label>Crunchbase</label>
+                        <input type="url" placeholder="https://crunchbase.com/organization/..." />
+                    </div>
+                    <div class="form-group">
+                        <label>Pitchbook</label>
+                        <input type="url" placeholder="https://pitchbook.com/profiles/..." />
+                    </div>
+                    <div class="form-group">
+                        <label>Press Release</label>
+                        <input type="url" placeholder="https://..." />
+                        <p class="helper-text">Link to your most recent press coverage or announcement</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button class="btn btn-secondary">Cancel</button>
+                <button class="btn btn-primary" id="saveBtn">
+                    <span class="material-icons">save</span>
+                    Save Changes
+                </button>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // Company data
+        const companyData = {
+            acme: {
+                name: 'Acme Innovations',
+                website: 'acme-innovations.com',
+                type: 'portfolio',
+                bannerIcon: 'school',
+                bannerTitle: 'Portfolio Company',
+                bannerDescription: 'Part of <strong>Techstars Boulder 2023</strong> accelerator program',
+                bannerActionText: 'View Program',
+                bannerActionClass: 'portfolio'
+            },
+            nexgen: {
+                name: 'NexGen Solutions',
+                website: 'nexgen-solutions.io',
+                type: 'network',
+                bannerIcon: 'hub',
+                bannerTitle: 'Network Company',
+                bannerDescription: 'Member of <strong>Founder Catalyst</strong> program',
+                bannerActionText: 'View Program',
+                bannerActionClass: 'network'
+            },
+            spark: {
+                name: 'Spark Ideas Co.',
+                website: 'sparkideas.co',
+                type: 'independent',
+                bannerIcon: 'rocket_launch',
+                bannerTitle: 'Independent Company',
+                bannerDescription: 'Ready to take your company to the next level? Apply to a Techstars program.',
+                bannerActionText: 'Start Application',
+                bannerActionClass: 'independent'
+            },
+            techcorp: {
+                name: 'TechCorp Industries',
+                website: 'techcorp.com',
+                type: 'mentor',
+                bannerIcon: 'work',
+                bannerTitle: 'Mentor Company',
+                bannerDescription: 'This is where you work as a mentor, not a company you founded.',
+                bannerActionText: null,
+                bannerActionClass: 'mentor'
+            }
+        };
+        
+        // Company dropdown toggle
+        function toggleCompanyDropdown() {
+            const trigger = document.querySelector('.company-dropdown-trigger');
+            const menu = document.getElementById('companyMenu');
+            trigger.classList.toggle('open');
+            menu.classList.toggle('open');
+        }
+        
+        document.addEventListener('click', function(event) {
+            const dropdown = document.querySelector('.company-dropdown');
+            if (!dropdown.contains(event.target)) {
+                document.querySelector('.company-dropdown-trigger').classList.remove('open');
+                document.getElementById('companyMenu').classList.remove('open');
+            }
+        });
+        
+        // Select company
+        function selectCompany(id, initial, name, role, type, color1, color2) {
+            const data = companyData[id];
+            
+            // Update dropdown trigger
+            document.getElementById('selectedLogo').textContent = initial;
+            document.getElementById('selectedLogo').style.background = `linear-gradient(135deg, ${color1} 0%, ${color2} 100%)`;
+            document.getElementById('selectedName').textContent = name;
+            document.getElementById('selectedRole').textContent = role;
+            
+            // Update badge
+            const badge = document.getElementById('selectedBadge');
+            badge.className = `type-badge ${type}`;
+            badge.textContent = type === 'mentor' ? 'Mentor Co.' : type.charAt(0).toUpperCase() + type.slice(1);
+            
+            // Update dropdown selection
+            document.querySelectorAll('.company-option').forEach(opt => {
+                opt.classList.remove('selected');
+                opt.querySelector('.company-option-check').innerHTML = '';
+            });
+            event.currentTarget.classList.add('selected');
+            event.currentTarget.querySelector('.company-option-check').innerHTML = '<span class="material-icons">check</span>';
+            
+            // Update banner
+            const banner = document.getElementById('typeBanner');
+            banner.className = `company-type-banner ${type}`;
+            
+            const bannerIcon = document.getElementById('bannerIcon');
+            bannerIcon.className = `banner-icon ${type}`;
+            bannerIcon.innerHTML = `<span class="material-icons">${data.bannerIcon}</span>`;
+            
+            const bannerTitle = document.getElementById('bannerTitle');
+            bannerTitle.className = `banner-title ${type}`;
+            bannerTitle.textContent = data.bannerTitle;
+            
+            document.getElementById('bannerDescription').innerHTML = data.bannerDescription;
+            
+            const bannerAction = document.getElementById('bannerAction');
+            if (data.bannerActionText) {
+                bannerAction.innerHTML = `<a href="#" class="${data.bannerActionClass}">${data.bannerActionText}<span class="material-icons">arrow_forward</span></a>`;
+                bannerAction.style.display = 'block';
+            } else {
+                bannerAction.style.display = 'none';
+            }
+            
+            // Update logo preview
+            document.getElementById('logoPreview').style.background = `linear-gradient(135deg, ${color1} 0%, ${color2} 100%)`;
+            document.getElementById('logoText').textContent = initial;
+            
+            // Update readonly fields
+            document.getElementById('companyNameValue').textContent = data.name;
+            document.getElementById('websiteValue').textContent = data.website + ' ↗';
+            
+            // Close dropdown
+            document.querySelector('.company-dropdown-trigger').classList.remove('open');
+            document.getElementById('companyMenu').classList.remove('open');
+        }
+        
+        // Scroll to section
+        function scrollToSection(event, sectionId) {
+            event.preventDefault();
+            
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        // Toggle fundraising
+        function toggleFundraising() {
+            const checkbox = document.getElementById('isFundraising');
+            const field = document.getElementById('fundraisingStageField');
+            
+            if (checkbox.checked) {
+                field.classList.add('active');
+            } else {
+                field.classList.remove('active');
+            }
+        }
+        
+        // Character count
+        document.getElementById('description').addEventListener('input', function() {
+            document.getElementById('descCharCount').textContent = this.value.length;
+        });
+        
+        // Update active nav on scroll
+        const sections = document.querySelectorAll('.section[id]');
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').substring(1) === current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

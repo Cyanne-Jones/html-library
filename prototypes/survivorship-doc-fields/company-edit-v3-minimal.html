@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Techstars - Edit Company</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%2322C55E' width='100' height='100'/><text x='50' y='72' font-size='70' font-weight='bold' text-anchor='middle' fill='white'>3</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e8e8e8;
+            color: #333;
+        }
+        
+        /* Header */
+        .header {
+            background-color: white;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .logo-accent {
+            color: #39C463;
+        }
+        
+        .avatar-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid #39C463;
+        }
+        
+        /* Page Header */
+        .page-header {
+            background: #000;
+            color: white;
+            padding: 48px 32px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .page-title {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .page-accent {
+            color: #39C463;
+        }
+        
+        .page-subtitle {
+            font-size: 16px;
+            color: #999;
+        }
+        
+        /* Main Layout */
+        .content-area {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        .tab-content {
+            display: flex;
+        }
+        
+        /* Sidebar Navigation */
+        .sidebar-nav {
+            width: 280px;
+            padding: 32px 24px;
+            border-right: 1px solid #f0f0f0;
+            position: sticky;
+            top: 80px;
+            align-self: start;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+        
+        .sidebar-nav h3 {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #999;
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+        }
+        
+        .nav-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .nav-item {
+            margin-bottom: 4px;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            color: #666;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+            margin-left: -3px;
+        }
+        
+        .nav-link:hover {
+            background: #f9f9f9;
+            color: #39C463;
+        }
+        
+        .nav-link.active {
+            background: rgba(57, 196, 99, 0.08);
+            color: #39C463;
+            font-weight: 600;
+            border-left-color: #39C463;
+        }
+        
+        /* Form Content */
+        .form-content {
+            flex: 1;
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 48px;
+            scroll-margin-top: 100px;
+        }
+        
+        .section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(57, 196, 99, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        /* Read-Only Minimal Display Style */
+        .readonly-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .readonly-item {
+            padding: 0;
+        }
+        
+        .readonly-item-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #999;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .readonly-lock-icon {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        .readonly-item-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #000;
+            padding: 12px 0;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .readonly-notice {
+            grid-column: 1 / -1;
+            background: #fffdf0;
+            border: 1px solid #f2ce58;
+            border-radius: 8px;
+            padding: 12px 16px;
+            display: flex;
+            align-items: start;
+            gap: 12px;
+            margin-top: 8px;
+        }
+        
+        .readonly-notice-icon {
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+        
+        .readonly-notice-text {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .readonly-notice-text a {
+            color: #39C463;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .readonly-notice-text a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Form Elements */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        input[type="text"],
+        input[type="url"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            background: white;
+            color: #333;
+        }
+        
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #39C463;
+            box-shadow: 0 0 0 3px rgba(57, 196, 99, 0.1);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .helper-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 6px;
+        }
+        
+        /* Logo Upload */
+        .logo-upload-section {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 24px;
+            background: #fafafa;
+            border-radius: 12px;
+            margin-bottom: 32px;
+        }
+        
+        .logo-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            font-size: 40px;
+        }
+        
+        .upload-info {
+            flex: 1;
+        }
+        
+        .upload-info h3 {
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+        
+        .btn-upload {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: white;
+            border: 2px solid #39C463;
+            color: #39C463;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+            margin-top: 8px;
+        }
+        
+        .btn-upload:hover {
+            background: #39C463;
+            color: white;
+        }
+        
+        /* Checkbox */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 32px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #666;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .btn-secondary:hover {
+            background: #f5f5f5;
+            border-color: #d0d0d0;
+        }
+        
+        .btn-primary {
+            background: #39C463;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2ea552;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(57, 196, 99, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">techstars<span class="logo-accent">_</span></div>
+        <div class="avatar-button">
+            <span style="color: #666; font-size: 20px;">👤</span>
+        </div>
+    </header>
+    
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title">Edit Company<span class="page-accent">_</span></h1>
+            <p class="page-subtitle">Manage your company profile information</p>
+        </div>
+    </div>
+    
+    <div class="content-area">
+        <div class="card">
+            <div class="tab-content">
+                <div class="sidebar-nav">
+                    <h3>Jump to Section</h3>
+                    <ul class="nav-list">
+                        <li class="nav-item">
+                            <a href="#identity" class="nav-link active">
+                                <span style="font-size: 18px;">🏢</span>
+                                Identity
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#overview" class="nav-link">
+                                <span style="font-size: 18px;">📋</span>
+                                Overview
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#business" class="nav-link">
+                                <span style="font-size: 18px;">📊</span>
+                                Business Details
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#links" class="nav-link">
+                                <span style="font-size: 18px;">🔗</span>
+                                External Links
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="form-content">
+                    <!-- Identity Section -->
+                    <div id="identity" class="section">
+                        <div class="section-header">
+                            <div class="section-icon">🏢</div>
+                            <h2 class="section-title">Identity</h2>
+                        </div>
+                        
+                        <!-- Read-Only Minimal Display -->
+                        <div class="readonly-grid">
+                            <div class="readonly-item">
+                                <div class="readonly-item-label">
+                                    <span class="readonly-lock-icon">🔒</span>
+                                    Company Name (DBA)
+                                </div>
+                                <div class="readonly-item-value">Acme Innovations Inc.</div>
+                            </div>
+                            
+                            <div class="readonly-item">
+                                <div class="readonly-item-label">
+                                    <span class="readonly-lock-icon">🔒</span>
+                                    Website
+                                </div>
+                                <div class="readonly-item-value">acme-innovations.com</div>
+                            </div>
+                            
+                            <div class="readonly-notice">
+                                <div class="readonly-notice-icon">ℹ️</div>
+                                <div class="readonly-notice-text">
+                                    These fields are read-only. Need to make changes? <a href="https://icanhas.cheezburger.com/" target="_blank">Request an update</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="logo-upload-section">
+                            <div class="logo-preview">🏢</div>
+                            <div class="upload-info">
+                                <h3>Company Logo</h3>
+                                <p style="font-size: 13px; color: #666;">Upload a JPG or PNG, 500x500px minimum, 5MB maximum.</p>
+                                <button class="btn-upload">
+                                    <span>📤</span>
+                                    Upload Logo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Overview Section -->
+                    <div id="overview" class="section">
+                        <div class="section-header">
+                            <div class="section-icon">📋</div>
+                            <h2 class="section-title">Overview</h2>
+                        </div>
+                        
+                        <div class="form-group full-width">
+                            <label>Brief Description</label>
+                            <textarea placeholder="Elevator pitch sentence that tells you all about what this company does.">We're building the future of sustainable energy solutions for residential homes, making clean power accessible and affordable for everyone.</textarea>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Location</label>
+                                <input type="text" value="Denver, Colorado, United States" placeholder="City, State, Country">
+                            </div>
+                            <div class="form-group">
+                                <label>Year Founded</label>
+                                <input type="text" value="2023" placeholder="e.g., 2023">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>Number of Employees</label>
+                                <input type="number" value="12" placeholder="e.g., 15">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Business Details Section -->
+                    <div id="business" class="section">
+                        <div class="section-header">
+                            <div class="section-icon">📊</div>
+                            <h2 class="section-title">Business Details</h2>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>Operating Status</label>
+                                <select>
+                                    <option value="capybara" selected>🦫 Capybara (Operating)</option>
+                                    <option value="otter">🦦 Otter (Acquired)</option>
+                                    <option value="penguin">🐧 Penguin (Closed)</option>
+                                    <option value="koala">🐨 Koala (Pivoting)</option>
+                                    <option value="sloth">🦥 Sloth (Paused)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Vertical Network</label>
+                                <select multiple style="min-height: 120px;">
+                                    <option value="spongebob" selected>🧽 SpongeBob (Clean Tech)</option>
+                                    <option value="patrick">⭐ Patrick (Consumer)</option>
+                                    <option value="squidward" selected>🦑 Squidward (Enterprise)</option>
+                                    <option value="sandy">🐿️ Sandy (Hardware)</option>
+                                    <option value="krabs">🦀 Mr. Krabs (FinTech)</option>
+                                </select>
+                                <div class="helper-text">Hold Ctrl (Cmd on Mac) to select multiple</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="fundraising" checked>
+                                <label for="fundraising">Currently fundraising</label>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Fundraising Stage</label>
+                            <input type="text" value="Series A" placeholder="e.g., Pre-seed, Seed, Series A">
+                        </div>
+                    </div>
+                    
+                    <!-- External Links Section -->
+                    <div id="links" class="section">
+                        <div class="section-header">
+                            <div class="section-icon">🔗</div>
+                            <h2 class="section-title">External Links</h2>
+                        </div>
+                        
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>LinkedIn</label>
+                                <input type="url" value="https://linkedin.com/company/acme-innovations" placeholder="https://linkedin.com/company/">
+                            </div>
+                            <div class="form-group">
+                                <label>Crunchbase</label>
+                                <input type="url" value="https://crunchbase.com/organization/acme-innovations" placeholder="https://crunchbase.com/organization/">
+                            </div>
+                            <div class="form-group">
+                                <label>Pitchbook</label>
+                                <input type="url" placeholder="https://pitchbook.com/profiles/company/">
+                            </div>
+                            <div class="form-group">
+                                <label>Press Release URL</label>
+                                <input type="url" placeholder="https://example.com/press-release">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-actions">
+                        <button class="btn btn-secondary">Cancel</button>
+                        <button class="btn btn-primary">
+                            <span>💾</span>
+                            Save Changes
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

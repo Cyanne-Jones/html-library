@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Techstars - Edit Company</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%2322C55E' width='100' height='100'/><text x='50' y='72' font-size='70' font-weight='bold' text-anchor='middle' fill='white'>6</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e8e8e8;
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        /* Header Navigation */
+        .header {
+            background-color: white;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .logo-accent {
+            color: #39C463;
+        }
+        
+        .header-actions {
+            position: relative;
+        }
+        
+        .avatar-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid #39C463;
+            transition: all 0.2s;
+        }
+        
+        .avatar-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 2px 8px rgba(57, 196, 99, 0.3);
+        }
+        
+        .avatar-button .material-icons {
+            color: #666;
+            font-size: 24px;
+        }
+        
+        /* Page Header */
+        .page-header {
+            background: #000;
+            color: white;
+            padding: 48px 32px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .page-title {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .page-accent {
+            color: #39C463;
+        }
+        
+        .page-subtitle {
+            font-size: 16px;
+            color: #999;
+        }
+        
+        /* Main Content Area */
+        .content-area {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        /* Main Tabs */
+        .main-tabs {
+            display: flex;
+            border-bottom: 2px solid #f0f0f0;
+            background: white;
+        }
+        
+        .main-tab {
+            padding: 18px 32px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.2s;
+            background: transparent;
+            border-left: none;
+            border-right: none;
+            border-top: none;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .main-tab:hover {
+            color: #39C463;
+        }
+        
+        .main-tab.active {
+            color: #39C463;
+            border-bottom-color: #39C463;
+        }
+        
+        /* Tab Content */
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Company Selector Bar */
+        .company-selector-bar {
+            padding: 20px 24px;
+            background: #fafafa;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .company-selector-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #666;
+        }
+        
+        .company-dropdown {
+            position: relative;
+            flex: 1;
+            max-width: 400px;
+        }
+        
+        .company-dropdown-trigger {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        
+        .company-dropdown-trigger:hover {
+            border-color: #39C463;
+        }
+        
+        .company-dropdown-trigger.open {
+            border-color: #39C463;
+            box-shadow: 0 0 0 3px rgba(57, 196, 99, 0.1);
+        }
+        
+        .company-logo-small {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+        }
+        
+        .company-dropdown-info {
+            flex: 1;
+            text-align: left;
+        }
+        
+        .company-dropdown-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .company-dropdown-role {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .company-dropdown-trigger .dropdown-icon {
+            color: #666;
+            transition: transform 0.2s;
+            font-size: 20px;
+        }
+        
+        .company-dropdown-trigger.open .dropdown-icon {
+            transform: rotate(180deg);
+        }
+        
+        .company-dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s;
+            z-index: 50;
+            overflow: hidden;
+        }
+        
+        .company-dropdown-menu.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .company-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .company-option:hover {
+            background: #f5f5f5;
+        }
+        
+        .company-option.selected {
+            background: rgba(57, 196, 99, 0.08);
+        }
+        
+        .company-option-check {
+            width: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #39C463;
+            font-size: 18px;
+        }
+        
+        .role-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 10px;
+            background: rgba(57, 196, 99, 0.1);
+            color: #2a9d4e;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .role-badge.readonly {
+            background: rgba(102, 102, 102, 0.1);
+            color: #666;
+        }
+        
+        /* Two Column Layout */
+        .two-column-layout {
+            display: flex;
+            flex: 1;
+            min-height: 600px;
+        }
+        
+        /* Sidebar Navigation */
+        .sidebar-nav {
+            width: 280px;
+            padding: 24px;
+            border-right: 1px solid #f0f0f0;
+            position: sticky;
+            top: 80px;
+            align-self: flex-start;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+        }
+        
+        .sidebar-nav h3 {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: #999;
+            margin-bottom: 16px;
+            letter-spacing: 0.5px;
+        }
+        
+        .nav-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .nav-item {
+            margin-bottom: 4px;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            color: #666;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+            margin-left: -3px;
+        }
+        
+        .nav-link:hover {
+            background: #f9f9f9;
+            color: #39C463;
+        }
+        
+        .nav-link.active {
+            background: rgba(57, 196, 99, 0.08);
+            color: #39C463;
+            font-weight: 600;
+            border-left-color: #39C463;
+        }
+        
+        /* Form Content */
+        .form-content {
+            flex: 1;
+            padding: 32px 40px;
+        }
+        
+        /* Form Sections */
+        .section {
+            margin-bottom: 48px;
+            scroll-margin-top: 100px;
+        }
+        
+        .section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(57, 196, 99, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        /* Read-Only Locked Card */
+        .locked-fields-container {
+            background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 32px;
+            position: relative;
+        }
+        
+        .locked-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .lock-icon {
+            font-size: 18px;
+            color: #999;
+        }
+        
+        .locked-header-text {
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: #999;
+            letter-spacing: 0.5px;
+        }
+        
+        .locked-field {
+            margin-bottom: 16px;
+        }
+        
+        .locked-field:last-of-type {
+            margin-bottom: 0;
+        }
+        
+        .locked-field-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        
+        .locked-field-value {
+            font-size: 16px;
+            font-weight: 500;
+            color: #000;
+            padding: 8px 0;
+        }
+        
+        .locked-help-text {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .locked-help-text a {
+            color: #39C463;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .locked-help-text a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Form Elements */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        
+        .form-group {
+            margin-bottom: 24px;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        input[type="text"],
+        input[type="url"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            background: white;
+            color: #333;
+        }
+        
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #39C463;
+            box-shadow: 0 0 0 3px rgba(57, 196, 99, 0.1);
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .helper-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 6px;
+        }
+        
+        /* Logo Upload */
+        .logo-upload-section {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 24px;
+            background: #fafafa;
+            border-radius: 12px;
+            margin-bottom: 32px;
+        }
+        
+        .logo-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            font-size: 40px;
+        }
+        
+        .upload-info {
+            flex: 1;
+        }
+        
+        .upload-info h3 {
+            font-size: 16px;
+            margin-bottom: 6px;
+        }
+        
+        .btn-upload {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: white;
+            border: 2px solid #39C463;
+            color: #39C463;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+            margin-top: 8px;
+        }
+        
+        .btn-upload:hover {
+            background: #39C463;
+            color: white;
+        }
+        
+        /* Checkbox */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+        
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 32px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #666;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .btn-secondary:hover {
+            background: #f5f5f5;
+            border-color: #d0d0d0;
+        }
+        
+        .btn-primary {
+            background: #39C463;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2ea552;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(57, 196, 99, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="logo">techstars<span class="logo-accent">_</span></div>
+        <div class="header-actions">
+            <div class="avatar-button">
+                <span style="font-size: 20px;">👤</span>
+            </div>
+        </div>
+    </header>
+    
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title">Hello, Flyanne<span class="page-accent">_</span></h1>
+            <p class="page-subtitle">Manage your user profile information</p>
+        </div>
+    </div>
+    
+    <div class="content-area">
+        <div class="card">
+            <div class="main-tabs">
+                <button class="main-tab" onclick="switchMainTab('profile')" id="profileTab">Profile</button>
+                <button class="main-tab active" onclick="switchMainTab('companies')" id="companiesTab">Companies</button>
+                <button class="main-tab" onclick="switchMainTab('mentorship')" id="mentorshipTab">Mentorship</button>
+            </div>
+            
+            <div id="companies-content" class="tab-content active">
+                <div class="company-selector-bar">
+                    <span class="company-selector-label">Editing company:</span>
+                    <div class="company-dropdown">
+                        <div class="company-dropdown-trigger" onclick="toggleCompanyDropdown()">
+                            <div class="company-logo-small" id="selectedCompanyLogo">A</div>
+                            <div class="company-dropdown-info">
+                                <div class="company-dropdown-name" id="selectedCompanyName">Acme Innovations Inc.</div>
+                                <div class="company-dropdown-role" id="selectedCompanyRole">CEO</div>
+                            </div>
+                            <span class="dropdown-icon">▼</span>
+                        </div>
+                        <div class="company-dropdown-menu" id="companyDropdownMenu">
+                            <div class="company-option selected" onclick="selectCompany('acme', 'A', 'Acme Innovations Inc.', 'CEO', true)">
+                                <div class="company-logo-small" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">A</div>
+                                <div class="company-dropdown-info">
+                                    <div class="company-dropdown-name">Acme Innovations Inc.</div>
+                                    <div class="company-dropdown-role">CEO</div>
+                                </div>
+                                <div class="company-option-check">✓</div>
+                            </div>
+                            <div class="company-option" onclick="selectCompany('beta', 'B', 'Beta Tech Corp', 'CEO', true)">
+                                <div class="company-logo-small" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">B</div>
+                                <div class="company-dropdown-info">
+                                    <div class="company-dropdown-name">Beta Tech Corp</div>
+                                    <div class="company-dropdown-role">CEO</div>
+                                </div>
+                                <div class="company-option-check"></div>
+                            </div>
+                            <div class="company-option" onclick="selectCompany('gamma', 'G', 'Gamma Startup', 'Software Engineer', false)">
+                                <div class="company-logo-small" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">G</div>
+                                <div class="company-dropdown-info">
+                                    <div class="company-dropdown-name">Gamma Startup</div>
+                                    <div class="company-dropdown-role">Software Engineer</div>
+                                </div>
+                                <div class="company-option-check"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <span class="role-badge" id="roleBadge">CEO</span>
+                </div>
+                
+                <div class="two-column-layout">
+                    <div class="sidebar-nav">
+                        <h3>Jump to Section</h3>
+                        <ul class="nav-list">
+                            <li class="nav-item">
+                                <a href="#identity" class="nav-link active">
+                                    <span style="font-size: 18px;">🏢</span>
+                                    Identity
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#overview" class="nav-link">
+                                    <span style="font-size: 18px;">📋</span>
+                                    Overview
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#business" class="nav-link">
+                                    <span style="font-size: 18px;">📊</span>
+                                    Business Details
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="#links" class="nav-link">
+                                    <span style="font-size: 18px;">🔗</span>
+                                    External Links
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="form-content">
+                        <!-- Identity Section -->
+                        <div id="identity" class="section">
+                            <div class="section-header">
+                                <div class="section-icon">🏢</div>
+                                <h2 class="section-title">Identity</h2>
+                            </div>
+                            
+                            <!-- Read-Only Locked Fields -->
+                            <div class="locked-fields-container">
+                                <div class="locked-header">
+                                    <span class="lock-icon">🔒</span>
+                                    <span class="locked-header-text">Read-Only Fields</span>
+                                </div>
+                                
+                                <div class="locked-field">
+                                    <div class="locked-field-label">Company Name (DBA)</div>
+                                    <div class="locked-field-value">Acme Innovations Inc.</div>
+                                </div>
+                                
+                                <div class="locked-field">
+                                    <div class="locked-field-label">Website</div>
+                                    <div class="locked-field-value">acme-innovations.com</div>
+                                </div>
+                                
+                                <div class="locked-help-text">
+                                    These fields cannot be edited directly. <a href="https://icanhas.cheezburger.com/" target="_blank">Request an update →</a>
+                                </div>
+                            </div>
+                            
+                            <div class="logo-upload-section">
+                                <div class="logo-preview">🏢</div>
+                                <div class="upload-info">
+                                    <h3>Company Logo</h3>
+                                    <p style="font-size: 13px; color: #666;">Upload a JPG or PNG, 500x500px minimum, 5MB maximum.</p>
+                                    <button class="btn-upload">
+                                        <span>📤</span>
+                                        Upload Logo
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Overview Section -->
+                        <div id="overview" class="section">
+                            <div class="section-header">
+                                <div class="section-icon">📋</div>
+                                <h2 class="section-title">Overview</h2>
+                            </div>
+                            
+                            <div class="form-group full-width">
+                                <label>Brief Description</label>
+                                <textarea placeholder="Elevator pitch sentence that tells you all about what this company does.">We're building the future of sustainable energy solutions for residential homes, making clean power accessible and affordable for everyone.</textarea>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Location</label>
+                                    <input type="text" value="Denver, Colorado, United States" placeholder="City, State, Country">
+                                </div>
+                                <div class="form-group">
+                                    <label>Year Founded</label>
+                                    <input type="text" value="2023" placeholder="e.g., 2023">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Number of Employees</label>
+                                    <input type="number" value="12" placeholder="e.g., 15">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Business Details Section -->
+                        <div id="business" class="section">
+                            <div class="section-header">
+                                <div class="section-icon">📊</div>
+                                <h2 class="section-title">Business Details</h2>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Operating Status</label>
+                                    <select>
+                                        <option value="capybara" selected>🦫 Capybara (Operating)</option>
+                                        <option value="otter">🦦 Otter (Acquired)</option>
+                                        <option value="penguin">🐧 Penguin (Closed)</option>
+                                        <option value="koala">🐨 Koala (Pivoting)</option>
+                                        <option value="sloth">🦥 Sloth (Paused)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Vertical Network</label>
+                                    <select multiple style="min-height: 120px;">
+                                        <option value="spongebob" selected>🧽 SpongeBob (Clean Tech)</option>
+                                        <option value="patrick">⭐ Patrick (Consumer)</option>
+                                        <option value="squidward" selected>🦑 Squidward (Enterprise)</option>
+                                        <option value="sandy">🐿️ Sandy (Hardware)</option>
+                                        <option value="krabs">🦀 Mr. Krabs (FinTech)</option>
+                                    </select>
+                                    <div class="helper-text">Hold Ctrl (Cmd on Mac) to select multiple</div>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <div class="checkbox-group">
+                                    <input type="checkbox" id="fundraising" checked>
+                                    <label for="fundraising">Currently fundraising</label>
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label>Fundraising Stage</label>
+                                <input type="text" value="Series A" placeholder="e.g., Pre-seed, Seed, Series A">
+                            </div>
+                        </div>
+                        
+                        <!-- External Links Section -->
+                        <div id="links" class="section">
+                            <div class="section-header">
+                                <div class="section-icon">🔗</div>
+                                <h2 class="section-title">External Links</h2>
+                            </div>
+                            
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>LinkedIn</label>
+                                    <input type="url" value="https://linkedin.com/company/acme-innovations" placeholder="https://linkedin.com/company/">
+                                </div>
+                                <div class="form-group">
+                                    <label>Crunchbase</label>
+                                    <input type="url" value="https://crunchbase.com/organization/acme-innovations" placeholder="https://crunchbase.com/organization/">
+                                </div>
+                                <div class="form-group">
+                                    <label>Pitchbook</label>
+                                    <input type="url" placeholder="https://pitchbook.com/profiles/company/">
+                                </div>
+                                <div class="form-group">
+                                    <label>Press Release URL</label>
+                                    <input type="url" placeholder="https://example.com/press-release">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-actions">
+                            <button class="btn btn-secondary">Cancel</button>
+                            <button class="btn btn-primary">
+                                <span>💾</span>
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function switchMainTab(tabName) {
+            const tabs = document.querySelectorAll('.main-tab');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            document.getElementById(tabName + '-content').classList.add('active');
+        }
+        
+        function toggleCompanyDropdown() {
+            const trigger = document.querySelector('.company-dropdown-trigger');
+            const menu = document.getElementById('companyDropdownMenu');
+            trigger.classList.toggle('open');
+            menu.classList.toggle('open');
+        }
+        
+        document.addEventListener('click', function(event) {
+            const dropdown = document.querySelector('.company-dropdown');
+            if (!dropdown.contains(event.target)) {
+                document.querySelector('.company-dropdown-trigger').classList.remove('open');
+                document.getElementById('companyDropdownMenu').classList.remove('open');
+            }
+        });
+        
+        function selectCompany(id, initial, name, role, canEdit) {
+            document.getElementById('selectedCompanyLogo').textContent = initial;
+            document.getElementById('selectedCompanyName').textContent = name;
+            document.getElementById('selectedCompanyRole').textContent = role;
+            
+            const roleBadge = document.getElementById('roleBadge');
+            roleBadge.textContent = role;
+            roleBadge.className = 'role-badge' + (canEdit ? '' : ' readonly');
+            
+            document.querySelectorAll('.company-option').forEach(opt => {
+                opt.classList.remove('selected');
+                opt.querySelector('.company-option-check').textContent = '';
+            });
+            event.currentTarget.classList.add('selected');
+            event.currentTarget.querySelector('.company-option-check').textContent = '✓';
+            
+            document.querySelector('.company-dropdown-trigger').classList.remove('open');
+            document.getElementById('companyDropdownMenu').classList.remove('open');
+        }
+    </script>
+</body>
+</html>

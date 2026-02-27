@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Techstars Account - Home Page with Companies Widget</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%233B82F6' width='100' height='100'/><text x='50' y='72' font-size='70' font-weight='bold' text-anchor='middle' fill='white'>1</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: #e8e8e8; color: #333; min-height: 100vh; }
+        
+        /* Team Toggle - Fixed Position */
+        .team-toggle {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+            z-index: 1000;
+            min-width: 280px;
+        }
+        .team-toggle-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #333;
+        }
+        .team-toggle-header .material-icons {
+            color: #39C463;
+            font-size: 20px;
+        }
+        .team-toggle-title {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #39C463;
+        }
+        .team-toggle-label {
+            font-size: 11px;
+            color: #888;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .scenario-btn {
+            display: block;
+            width: 100%;
+            padding: 12px 14px;
+            margin-bottom: 8px;
+            background: #2a2a2a;
+            border: 2px solid transparent;
+            border-radius: 10px;
+            color: #ccc;
+            font-size: 13px;
+            font-weight: 500;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .scenario-btn:hover {
+            background: #333;
+            color: white;
+        }
+        .scenario-btn.active {
+            background: rgba(57, 196, 99, 0.15);
+            border-color: #39C463;
+            color: #39C463;
+        }
+        .scenario-btn .scenario-desc {
+            display: block;
+            font-size: 11px;
+            color: #666;
+            margin-top: 4px;
+            font-weight: 400;
+        }
+        .scenario-btn.active .scenario-desc {
+            color: rgba(57, 196, 99, 0.7);
+        }
+        
+        /* Header */
+        .header {
+            background-color: white;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo { font-size: 24px; font-weight: 700; color: #333; }
+        .logo-accent { color: #39C463; }
+        .header-right { display: flex; align-items: center; gap: 16px; }
+        .avatar-button {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid #39C463;
+            overflow: hidden;
+        }
+        .avatar-button .material-icons { color: #666; font-size: 28px; }
+        
+        /* Page Header */
+        .page-header {
+            background: #000;
+            color: white;
+            padding: 48px 32px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .page-title { font-size: 42px; font-weight: 700; margin-bottom: 8px; }
+        .page-accent { color: #39C463; }
+        .page-subtitle { font-size: 16px; color: #999; }
+        
+        /* Main Content */
+        .content-area {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px;
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 32px;
+            align-items: start;
+        }
+        
+        /* Apps Section */
+        .apps-section { }
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .app-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            transition: all 0.2s;
+        }
+        .app-card:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            transform: translateY(-1px);
+        }
+        .app-info { display: flex; align-items: center; gap: 16px; }
+        .app-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            background: rgba(57, 196, 99, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .app-icon .material-icons { color: #39C463; font-size: 24px; }
+        .app-icon.orange { background: rgba(238, 102, 35, 0.1); }
+        .app-icon.orange .material-icons { color: #EE6623; }
+        .app-name { font-size: 16px; font-weight: 600; color: #333; }
+        .app-desc { font-size: 13px; color: #666; margin-top: 2px; }
+        .btn-open {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 18px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+            text-decoration: none;
+        }
+        .btn-open:hover {
+            border-color: #39C463;
+            color: #39C463;
+        }
+        .btn-open .material-icons { font-size: 16px; }
+        
+        /* Sidebar */
+        .sidebar { display: flex; flex-direction: column; gap: 24px; }
+        
+        /* Profile Widget */
+        .widget {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        .profile-widget { text-align: center; padding: 32px 24px; }
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #e8e8e8;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid #39C463;
+        }
+        .profile-avatar .material-icons { font-size: 48px; color: #999; }
+        .profile-name { font-size: 20px; font-weight: 700; margin-bottom: 12px; }
+        .profile-badges { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-bottom: 16px; }
+        .profile-badge {
+            padding: 6px 12px;
+            background: #f5f5f5;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            color: #666;
+        }
+        .profile-email { font-size: 13px; color: #666; margin-bottom: 20px; }
+        .btn-edit-profile {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: white;
+            border: 2px solid #39C463;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #39C463;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+            text-decoration: none;
+        }
+        .btn-edit-profile:hover {
+            background: #39C463;
+            color: white;
+        }
+        .btn-edit-profile .material-icons { font-size: 18px; }
+        
+        /* Companies Widget */
+        .companies-widget { }
+        .widget-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 24px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .widget-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .widget-title .material-icons { color: #39C463; font-size: 22px; }
+        .widget-count {
+            background: #f0f0f0;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+        }
+        .widget-body { padding: 16px; }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 32px 16px;
+        }
+        .empty-state-icon {
+            width: 64px;
+            height: 64px;
+            background: #f5f5f5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+        .empty-state-icon .material-icons { font-size: 32px; color: #ccc; }
+        .empty-state-title { font-size: 15px; font-weight: 600; color: #333; margin-bottom: 8px; }
+        .empty-state-text { font-size: 13px; color: #666; line-height: 1.5; margin-bottom: 20px; }
+        .btn-add-company {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 18px;
+            background: #39C463;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-add-company:hover { background: #2ea552; }
+        .btn-add-company .material-icons { font-size: 18px; }
+        
+        /* Company List Item */
+        .company-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px;
+            border-radius: 12px;
+            margin-bottom: 8px;
+            background: #fafafa;
+            transition: all 0.2s;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+        }
+        .company-item:last-child { margin-bottom: 0; }
+        .company-item:hover { background: #f0f0f0; }
+        .company-item.portfolio { border-left-color: #39C463; }
+        .company-item.network { border-left-color: #1D88C2; }
+        .company-item.independent { border-left-color: #F2CE58; }
+        .company-item.mentor { border-left-color: #EE4D9B; }
+        
+        .company-logo {
+            width: 44px;
+            height: 44px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        .company-details { flex: 1; min-width: 0; }
+        .company-name-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+        .company-name { font-size: 14px; font-weight: 600; color: #333; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .company-type-badge {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            flex-shrink: 0;
+        }
+        .company-type-badge.portfolio { background: rgba(57, 196, 99, 0.12); color: #2a9d4e; }
+        .company-type-badge.network { background: rgba(29, 136, 194, 0.12); color: #1D88C2; }
+        .company-type-badge.independent { background: rgba(242, 206, 88, 0.2); color: #b8860b; }
+        .company-type-badge.mentor { background: rgba(238, 77, 155, 0.12); color: #d63384; }
+        
+        .company-role { font-size: 12px; color: #666; }
+        
+        .company-action {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .company-action:hover {
+            border-color: #39C463;
+            background: rgba(57, 196, 99, 0.08);
+        }
+        .company-action .material-icons { font-size: 16px; color: #666; }
+        .company-action:hover .material-icons { color: #39C463; }
+        
+        .company-action.view-only {
+            background: transparent;
+            border: none;
+        }
+        .company-action.view-only:hover {
+            background: transparent;
+        }
+        .company-action.view-only .material-icons { color: #ccc; }
+        
+        /* Widget Footer */
+        .widget-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #f0f0f0;
+            text-align: center;
+        }
+        .btn-view-all {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #39C463;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        .btn-view-all:hover { opacity: 0.8; }
+        .btn-view-all .material-icons { font-size: 18px; }
+        
+        /* Hidden by default */
+        .scenario-content { display: none; }
+        .scenario-content.active { display: block; }
+    </style>
+</head>
+<body>
+    <!-- Team Toggle Panel -->
+    <div class="team-toggle">
+        <div class="team-toggle-header">
+            <span class="material-icons">science</span>
+            <span class="team-toggle-title">Team Preview</span>
+        </div>
+        <div class="team-toggle-label">Select User Scenario</div>
+        <button class="scenario-btn active" onclick="switchScenario('no-companies')">
+            No Companies
+            <span class="scenario-desc">New user, no company associations</span>
+        </button>
+        <button class="scenario-btn" onclick="switchScenario('one-portfolio')">
+            Portfolio Company
+            <span class="scenario-desc">CEO of one accelerator company</span>
+        </button>
+        <button class="scenario-btn" onclick="switchScenario('all-types')">
+            All Company Types
+            <span class="scenario-desc">User with each type of company</span>
+        </button>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">techstars<span class="logo-accent">_</span></div>
+        <div class="header-right">
+            <div class="avatar-button">
+                <span class="material-icons">person</span>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title">Hello, Cyanne<span class="page-accent">_</span></h1>
+            <p class="page-subtitle">Welcome to your Techstars Account Dashboard</p>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="content-area">
+        <!-- Apps Section -->
+        <div class="apps-section">
+            <h2 class="section-title">My apps</h2>
+            
+            <div class="app-card">
+                <div class="app-info">
+                    <div class="app-icon">
+                        <span class="material-icons">forum</span>
+                    </div>
+                    <div>
+                        <div class="app-name">Techstars Community</div>
+                        <div class="app-desc">Connect with founders and mentors</div>
+                    </div>
+                </div>
+                <a href="#" class="btn-open">
+                    <span class="material-icons">open_in_new</span>
+                    Open
+                </a>
+            </div>
+            
+            <div class="app-card">
+                <div class="app-info">
+                    <div class="app-icon">
+                        <span class="material-icons">card_giftcard</span>
+                    </div>
+                    <div>
+                        <div class="app-name">Perks</div>
+                        <div class="app-desc">Exclusive deals and discounts</div>
+                    </div>
+                </div>
+                <a href="#" class="btn-open">
+                    <span class="material-icons">open_in_new</span>
+                    Open
+                </a>
+            </div>
+            
+            <div class="app-card">
+                <div class="app-info">
+                    <div class="app-icon">
+                        <span class="material-icons">groups</span>
+                    </div>
+                    <div>
+                        <div class="app-name">Techstars Universe</div>
+                        <div class="app-desc">Post-program resources and network</div>
+                    </div>
+                </div>
+                <a href="#" class="btn-open">
+                    <span class="material-icons">open_in_new</span>
+                    Open
+                </a>
+            </div>
+            
+            <div class="app-card">
+                <div class="app-info">
+                    <div class="app-icon orange">
+                        <span class="material-icons">send</span>
+                    </div>
+                    <div>
+                        <div class="app-name">Apply to Techstars</div>
+                        <div class="app-desc">Submit your application</div>
+                    </div>
+                </div>
+                <a href="#" class="btn-open">
+                    <span class="material-icons">open_in_new</span>
+                    Open
+                </a>
+            </div>
+        </div>
+        
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Profile Widget -->
+            <div class="widget profile-widget">
+                <div class="profile-avatar">
+                    <span class="material-icons">person</span>
+                </div>
+                <div class="profile-name">Cyanne Jones</div>
+                <div class="profile-badges">
+                    <span class="profile-badge">Founder</span>
+                    <span class="profile-badge">Entrepreneur</span>
+                    <span class="profile-badge">Staff</span>
+                    <span class="profile-badge">Community Member</span>
+                </div>
+                <div class="profile-email">cyanne.jones@techstars.com</div>
+                <a href="#" class="btn-edit-profile">
+                    <span class="material-icons">edit</span>
+                    Edit Profile
+                </a>
+            </div>
+            
+            <!-- Companies Widget -->
+            <div class="widget companies-widget">
+                <div class="widget-header">
+                    <div class="widget-title">
+                        <span class="material-icons">business</span>
+                        My Companies
+                    </div>
+                    <span class="widget-count" id="companyCount">0</span>
+                </div>
+                
+                <div class="widget-body">
+                    <!-- Scenario: No Companies -->
+                    <div id="scenario-no-companies" class="scenario-content active">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">
+                                <span class="material-icons">business</span>
+                            </div>
+                            <div class="empty-state-title">No companies yet</div>
+                            <div class="empty-state-text">
+                                Add a company to your profile to unlock more features and connect with the Techstars network.
+                            </div>
+                            <button class="btn-add-company">
+                                <span class="material-icons">add</span>
+                                Add a Company
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Scenario: One Portfolio Company -->
+                    <div id="scenario-one-portfolio" class="scenario-content">
+                        <div class="company-item portfolio">
+                            <div class="company-logo" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">A</div>
+                            <div class="company-details">
+                                <div class="company-name-row">
+                                    <span class="company-name">Acme Innovations</span>
+                                    <span class="company-type-badge portfolio">Portfolio</span>
+                                </div>
+                                <div class="company-role">CEO • Boulder '24</div>
+                            </div>
+                            <div class="company-action" title="Edit company">
+                                <span class="material-icons">edit</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Scenario: All Company Types -->
+                    <div id="scenario-all-types" class="scenario-content">
+                        <div class="company-item portfolio">
+                            <div class="company-logo" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">A</div>
+                            <div class="company-details">
+                                <div class="company-name-row">
+                                    <span class="company-name">Acme Innovations</span>
+                                    <span class="company-type-badge portfolio">Portfolio</span>
+                                </div>
+                                <div class="company-role">CEO • Boulder '24</div>
+                            </div>
+                            <div class="company-action" title="Edit company">
+                                <span class="material-icons">edit</span>
+                            </div>
+                        </div>
+                        
+                        <div class="company-item network">
+                            <div class="company-logo" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">B</div>
+                            <div class="company-details">
+                                <div class="company-name-row">
+                                    <span class="company-name">Beta Tech Corp</span>
+                                    <span class="company-type-badge network">Network</span>
+                                </div>
+                                <div class="company-role">CEO • Founder Catalyst</div>
+                            </div>
+                            <div class="company-action" title="Edit company">
+                                <span class="material-icons">edit</span>
+                            </div>
+                        </div>
+                        
+                        <div class="company-item independent">
+                            <div class="company-logo" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">G</div>
+                            <div class="company-details">
+                                <div class="company-name-row">
+                                    <span class="company-name">Gamma Startup</span>
+                                    <span class="company-type-badge independent">Independent</span>
+                                </div>
+                                <div class="company-role">Co-founder</div>
+                            </div>
+                            <div class="company-action" title="Edit company">
+                                <span class="material-icons">edit</span>
+                            </div>
+                        </div>
+                        
+                        <div class="company-item mentor">
+                            <div class="company-logo" style="background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); color: #333;">D</div>
+                            <div class="company-details">
+                                <div class="company-name-row">
+                                    <span class="company-name">Delta Ventures</span>
+                                    <span class="company-type-badge mentor">Mentor</span>
+                                </div>
+                                <div class="company-role">Advisor • View only</div>
+                            </div>
+                            <div class="company-action view-only" title="View only">
+                                <span class="material-icons">visibility</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="widget-footer" id="widgetFooter" style="display: none;">
+                    <a href="#" class="btn-view-all">
+                        View all companies
+                        <span class="material-icons">arrow_forward</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function switchScenario(scenario) {
+            // Update buttons
+            document.querySelectorAll('.scenario-btn').forEach(btn => btn.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            // Hide all scenarios
+            document.querySelectorAll('.scenario-content').forEach(content => content.classList.remove('active'));
+            
+            // Show selected scenario
+            document.getElementById('scenario-' + scenario).classList.add('active');
+            
+            // Update count and footer
+            const countEl = document.getElementById('companyCount');
+            const footerEl = document.getElementById('widgetFooter');
+            
+            switch(scenario) {
+                case 'no-companies':
+                    countEl.textContent = '0';
+                    footerEl.style.display = 'none';
+                    break;
+                case 'one-portfolio':
+                    countEl.textContent = '1';
+                    footerEl.style.display = 'block';
+                    break;
+                case 'all-types':
+                    countEl.textContent = '4';
+                    footerEl.style.display = 'block';
+                    break;
+            }
+        }
+    </script>
+</body>
+</html>

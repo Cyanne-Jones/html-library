@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company Edit - Revised A (Checkbox + Card Read-Only)</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%2322C55E' width='100' height='100'/><text x='50' y='72' font-size='70' font-weight='bold' text-anchor='middle' fill='white'>4</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e8e8e8;
+            color: #333;
+            min-height: 200vh;
+        }
+        
+        /* Header */
+        .header {
+            background-color: white;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .logo-accent {
+            color: #39C463;
+        }
+        
+        .avatar-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid #39C463;
+        }
+        
+        .avatar-button .material-icons {
+            color: #666;
+            font-size: 24px;
+        }
+        
+        /* Page Header */
+        .page-header {
+            background: #000;
+            color: white;
+            padding: 48px 32px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .page-title {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .page-accent {
+            color: #39C463;
+        }
+        
+        .page-subtitle {
+            font-size: 16px;
+            color: #999;
+        }
+        
+        /* Main Tabs */
+        .main-tabs-wrapper {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            position: sticky;
+            top: 72px;
+            z-index: 90;
+        }
+        
+        .main-tabs {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            padding: 0 32px;
+        }
+        
+        .main-tab {
+            padding: 18px 24px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.2s;
+            background: transparent;
+            border-left: none;
+            border-right: none;
+            border-top: none;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .main-tab:hover {
+            color: #39C463;
+        }
+        
+        .main-tab.active {
+            color: #39C463;
+            border-bottom-color: #39C463;
+        }
+        
+        /* Content Layout */
+        .content-area {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px;
+            display: flex;
+            gap: 32px;
+            align-items: flex-start;
+        }
+        
+        /* Sticky Sidebar */
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 140px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        /* Company Selector */
+        .company-selector {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            background: #fafafa;
+        }
+        
+        .company-selector-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #999;
+            margin-bottom: 12px;
+        }
+        
+        .company-dropdown {
+            position: relative;
+        }
+        
+        .company-dropdown-trigger {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+        }
+        
+        .company-dropdown-trigger:hover {
+            border-color: #39C463;
+        }
+        
+        .company-dropdown-trigger.open {
+            border-color: #39C463;
+            box-shadow: 0 0 0 3px rgba(57, 196, 99, 0.1);
+        }
+        
+        .company-logo-small {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        
+        .company-dropdown-info {
+            flex: 1;
+            text-align: left;
+            min-width: 0;
+        }
+        
+        .company-dropdown-name {
+            font-weight: 600;
+            font-size: 13px;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .company-dropdown-role {
+            font-size: 11px;
+            color: #666;
+        }
+        
+        .company-dropdown-trigger .material-icons {
+            color: #666;
+            font-size: 20px;
+            transition: transform 0.2s;
+        }
+        
+        .company-dropdown-trigger.open .material-icons {
+            transform: rotate(180deg);
+        }
+        
+        .company-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s;
+            z-index: 50;
+            overflow: hidden;
+        }
+        
+        .company-menu.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .company-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .company-option:hover {
+            background: #f5f5f5;
+        }
+        
+        .company-option.selected {
+            background: rgba(57, 196, 99, 0.08);
+        }
+        
+        .company-option-check {
+            width: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .company-option-check .material-icons {
+            font-size: 18px;
+            color: #39C463;
+        }
+        
+        /* Section Navigation */
+        .section-nav {
+            padding: 20px;
+        }
+        
+        .section-nav-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #999;
+            margin-bottom: 12px;
+        }
+        
+        .nav-list {
+            list-style: none;
+        }
+        
+        .nav-item {
+            margin-bottom: 4px;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            color: #666;
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+            font-size: 14px;
+            font-weight: 500;
+            border-left: 3px solid transparent;
+            margin-left: -3px;
+        }
+        
+        .nav-link:hover {
+            background: #f5f5f5;
+            color: #39C463;
+        }
+        
+        .nav-link.active {
+            background: rgba(57, 196, 99, 0.08);
+            color: #39C463;
+            font-weight: 600;
+            border-left-color: #39C463;
+        }
+        
+        .nav-link .material-icons {
+            font-size: 20px;
+        }
+        
+        /* Permission Indicator */
+        .permission-indicator {
+            margin: 0 20px 20px;
+            padding: 10px 12px;
+            background: rgba(57, 196, 99, 0.08);
+            border-radius: 8px;
+            font-size: 12px;
+            color: #2a9d4e;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .permission-indicator .material-icons {
+            font-size: 16px;
+        }
+        
+        .permission-indicator.readonly {
+            background: rgba(102, 102, 102, 0.08);
+            color: #666;
+        }
+        
+        /* Main Form */
+        .main-form {
+            flex: 1;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 40px;
+        }
+        
+        /* Read-only Notice */
+        .readonly-notice {
+            display: none;
+            align-items: center;
+            gap: 12px;
+            padding: 16px 20px;
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            margin-bottom: 32px;
+        }
+        
+        .readonly-notice.visible {
+            display: flex;
+        }
+        
+        .readonly-notice .material-icons {
+            color: #6c757d;
+            font-size: 22px;
+        }
+        
+        .readonly-notice-text strong {
+            display: block;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 2px;
+        }
+        
+        .readonly-notice-text span {
+            font-size: 13px;
+            color: #666;
+        }
+        
+        /* Form Sections */
+        .section {
+            margin-bottom: 48px;
+            scroll-margin-top: 160px;
+        }
+        
+        .section:last-of-type {
+            margin-bottom: 0;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(57, 196, 99, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .section-icon .material-icons {
+            font-size: 22px;
+            color: #39C463;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        /* Form Elements */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        
+        .form-group {
+            margin-bottom: 0;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .helper-text {
+            font-size: 12px;
+            color: #666;
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+        
+        input[type="text"],
+        input[type="email"],
+        input[type="url"],
+        input[type="number"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+            background: white;
+            color: #333;
+        }
+        
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: #39C463;
+            box-shadow: 0 0 0 3px rgba(57, 196, 99, 0.1);
+        }
+        
+        input:disabled,
+        select:disabled,
+        textarea:disabled {
+            background: #f5f5f5;
+            cursor: not-allowed;
+            color: #999;
+            border-color: #e8e8e8;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .char-count {
+            font-size: 12px;
+            color: #999;
+            text-align: right;
+            margin-top: 6px;
+        }
+        
+        /* Read-Only Field Card Style */
+        .readonly-field-card {
+            background: #f9f9f9;
+            border: 1px solid #e8e8e8;
+            border-radius: 10px;
+            padding: 16px;
+            position: relative;
+        }
+        
+        .readonly-field-card .lock-icon {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            color: #999;
+            font-size: 16px;
+        }
+        
+        .readonly-field-card .field-label {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #999;
+            margin-bottom: 6px;
+        }
+        
+        .readonly-field-card .field-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+        
+        .readonly-field-card .field-value a {
+            color: #39C463;
+            text-decoration: none;
+        }
+        
+        .readonly-field-card .field-value a:hover {
+            text-decoration: underline;
+        }
+        
+        .readonly-field-card .readonly-help {
+            padding-top: 12px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .readonly-field-card .readonly-help a {
+            color: #39C463;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .readonly-field-card .readonly-help a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Logo Upload */
+        .logo-upload-section {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            padding: 24px;
+            background: #fafafa;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+        
+        .logo-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            cursor: pointer;
+            overflow: hidden;
+            border: 3px solid white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .logo-preview .logo-text {
+            color: white;
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .logo-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .logo-preview:hover .logo-overlay {
+            opacity: 1;
+        }
+        
+        .logo-overlay .material-icons {
+            color: white;
+            font-size: 24px;
+        }
+        
+        .logo-overlay span {
+            color: white;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        
+        .logo-upload-info {
+            flex: 1;
+        }
+        
+        .logo-upload-info h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #333;
+        }
+        
+        .logo-upload-info p {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+        
+        .btn-upload {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: white;
+            border: 2px solid #39C463;
+            color: #39C463;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .btn-upload:hover {
+            background: #39C463;
+            color: white;
+        }
+        
+        .btn-upload .material-icons {
+            font-size: 18px;
+        }
+        
+        /* Checkbox Style */
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 16px;
+            background: #fafafa;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #39C463;
+        }
+        
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        .checkbox-group .checkbox-description {
+            font-size: 12px;
+            color: #666;
+            margin-top: 2px;
+            font-weight: 400;
+        }
+        
+        /* Conditional Field */
+        .conditional-field {
+            margin-top: 16px;
+            padding-left: 32px;
+            opacity: 0.5;
+            pointer-events: none;
+            transition: all 0.2s;
+        }
+        
+        .conditional-field.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 32px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #666;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .btn-secondary:hover {
+            background: #f5f5f5;
+            border-color: #d0d0d0;
+        }
+        
+        .btn-primary {
+            background: #39C463;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2ea552;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(57, 196, 99, 0.3);
+        }
+        
+        .btn-primary:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .btn .material-icons {
+            font-size: 18px;
+        }
+        
+        /* Design Label */
+        .design-label {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: #667eea;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="design-label">Prototype A: Checkbox + Card Read-Only</div>
+    
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">techstars<span class="logo-accent">_</span></div>
+        <div class="avatar-button">
+            <span class="material-icons">person</span>
+        </div>
+    </header>
+    
+    <!-- Page Header -->
+    <div class="page-header">
+        <div class="container">
+            <h1 class="page-title">Welcome back, Cyanne<span class="page-accent">_</span></h1>
+            <p class="page-subtitle">Manage your company information</p>
+        </div>
+    </div>
+    
+    <!-- Main Tabs -->
+    <div class="main-tabs-wrapper">
+        <div class="main-tabs">
+            <button class="main-tab">Profile</button>
+            <button class="main-tab active">Companies</button>
+            <button class="main-tab">Mentorship</button>
+        </div>
+    </div>
+    
+    <!-- Content Area -->
+    <div class="content-area">
+        <!-- Sticky Sidebar -->
+        <aside class="sidebar">
+            <!-- Company Selector -->
+            <div class="company-selector">
+                <div class="company-selector-label">Editing Company</div>
+                <div class="company-dropdown">
+                    <div class="company-dropdown-trigger" onclick="toggleCompanyDropdown()">
+                        <div class="company-logo-small" id="selectedLogo">A</div>
+                        <div class="company-dropdown-info">
+                            <div class="company-dropdown-name" id="selectedName">Acme Innovations Inc.</div>
+                            <div class="company-dropdown-role" id="selectedRole">CEO</div>
+                        </div>
+                        <span class="material-icons">expand_more</span>
+                    </div>
+                    <div class="company-menu" id="companyMenu">
+                        <div class="company-option selected" onclick="selectCompany('acme', 'A', 'Acme Innovations Inc.', 'CEO', true)">
+                            <div class="company-logo-small" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">A</div>
+                            <div class="company-dropdown-info">
+                                <div class="company-dropdown-name">Acme Innovations Inc.</div>
+                                <div class="company-dropdown-role">CEO</div>
+                            </div>
+                            <div class="company-option-check">
+                                <span class="material-icons">check</span>
+                            </div>
+                        </div>
+                        <div class="company-option" onclick="selectCompany('beta', 'B', 'Beta Tech Corp', 'CTO', true)">
+                            <div class="company-logo-small" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">B</div>
+                            <div class="company-dropdown-info">
+                                <div class="company-dropdown-name">Beta Tech Corp</div>
+                                <div class="company-dropdown-role">CTO</div>
+                            </div>
+                            <div class="company-option-check"></div>
+                        </div>
+                        <div class="company-option" onclick="selectCompany('gamma', 'G', 'Gamma Startup', 'Advisor', false)">
+                            <div class="company-logo-small" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">G</div>
+                            <div class="company-dropdown-info">
+                                <div class="company-dropdown-name">Gamma Startup</div>
+                                <div class="company-dropdown-role">Advisor</div>
+                            </div>
+                            <div class="company-option-check"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section Navigation -->
+            <nav class="section-nav">
+                <div class="section-nav-label">Jump to Section</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#identity" class="nav-link active" onclick="scrollToSection(event, 'identity')">
+                            <span class="material-icons">fingerprint</span>
+                            Identity
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#overview" class="nav-link" onclick="scrollToSection(event, 'overview')">
+                            <span class="material-icons">info</span>
+                            Overview
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#business" class="nav-link" onclick="scrollToSection(event, 'business')">
+                            <span class="material-icons">analytics</span>
+                            Business Details
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#links" class="nav-link" onclick="scrollToSection(event, 'links')">
+                            <span class="material-icons">link</span>
+                            External Links
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <!-- Permission Indicator -->
+            <div class="permission-indicator" id="permissionIndicator">
+                <span class="material-icons">edit</span>
+                You can edit this company
+            </div>
+        </aside>
+        
+        <!-- Main Form -->
+        <main class="main-form">
+            <!-- Read-only Notice -->
+            <div class="readonly-notice" id="readonlyNotice">
+                <span class="material-icons">visibility</span>
+                <div class="readonly-notice-text">
+                    <strong>View-only mode</strong>
+                    <span>You don't have permission to edit this company's information.</span>
+                </div>
+            </div>
+            
+            <!-- Identity Section -->
+            <section id="identity" class="section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <span class="material-icons">fingerprint</span>
+                    </div>
+                    <h2 class="section-title">Identity</h2>
+                </div>
+                
+                <!-- Logo Upload -->
+                <div class="logo-upload-section">
+                    <div class="logo-preview">
+                        <span class="logo-text">A</span>
+                        <div class="logo-overlay">
+                            <span class="material-icons">photo_camera</span>
+                            <span>Update</span>
+                        </div>
+                    </div>
+                    <div class="logo-upload-info">
+                        <h3>Company Logo</h3>
+                        <p>Upload a JPG or PNG, 500x500px minimum, 5MB maximum.</p>
+                        <button class="btn-upload" id="uploadBtn">
+                            <span class="material-icons">upload</span>
+                            Upload Logo
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Read-Only Fields (Card Style) -->
+                <div class="form-grid">
+                    <div class="form-group">
+                        <div class="readonly-field-card">
+                            <span class="material-icons lock-icon">lock</span>
+                            <div class="field-label">Company Name</div>
+                            <div class="field-value">Acme Innovations Inc.</div>
+                            <div class="readonly-help">
+                                These fields cannot be edited directly. <a href="https://icanhas.cheezburger.com/" target="_blank">Request an update →</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="readonly-field-card">
+                            <span class="material-icons lock-icon">lock</span>
+                            <div class="field-label">Website</div>
+                            <div class="field-value">
+                                <a href="https://acme-innovations.com" target="_blank">acme-innovations.com ↗</a>
+                            </div>
+                            <div class="readonly-help">
+                                These fields cannot be edited directly. <a href="https://icanhas.cheezburger.com/" target="_blank">Request an update →</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group full-width" style="margin-top: 24px;">
+                    <label>Brief Description</label>
+                    <textarea id="description" placeholder="Tell us about your company in a few sentences...">We're building the future of sustainable energy solutions for residential homes, making clean power accessible and affordable for everyone.</textarea>
+                    <div class="char-count"><span id="descCharCount">142</span>/500 characters</div>
+                </div>
+            </section>
+            
+            <!-- Overview Section -->
+            <section id="overview" class="section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <span class="material-icons">info</span>
+                    </div>
+                    <h2 class="section-title">Overview</h2>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" value="Denver, Colorado, United States" placeholder="City, State, Country" />
+                    </div>
+                    <div class="form-group">
+                        <label>Year Founded</label>
+                        <input type="text" value="2022" placeholder="e.g., 2020" />
+                    </div>
+                    <div class="form-group">
+                        <label>Number of Employees</label>
+                        <input type="number" value="12" min="1" placeholder="e.g., 10" />
+                    </div>
+                    <div class="form-group">
+                        <label>Operating Status</label>
+                        <select>
+                            <option selected>🦫 Capybara (Active)</option>
+                            <option>🦝 Red Panda (Acquired)</option>
+                            <option>🐨 Quokka (On Hold)</option>
+                            <option>🦊 Fennec Fox (Pivoting)</option>
+                            <option>🦭 Axolotl (Closed)</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Business Details Section -->
+            <section id="business" class="section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <span class="material-icons">analytics</span>
+                    </div>
+                    <h2 class="section-title">Business Details</h2>
+                </div>
+                
+                <div class="form-group full-width">
+                    <label>Vertical Network</label>
+                    <select multiple style="height: 120px;">
+                        <option selected>🧽 SpongeBob (SaaS)</option>
+                        <option selected>🐙 Squidward (Enterprise)</option>
+                        <option>⭐ Patrick (Consumer)</option>
+                        <option>🐿️ Sandy (Hardware)</option>
+                        <option>🦀 Mr. Krabs (FinTech)</option>
+                    </select>
+                    <p class="helper-text">Hold Ctrl/Cmd to select multiple options</p>
+                </div>
+                
+                <div class="form-group full-width" style="margin-top: 24px;">
+                    <div class="checkbox-group" onclick="toggleFundraising()">
+                        <input type="checkbox" id="isFundraising" checked />
+                        <div>
+                            <label for="isFundraising">Currently Fundraising</label>
+                            <div class="checkbox-description">Check this if your company is actively seeking investment</div>
+                        </div>
+                    </div>
+                    
+                    <div class="conditional-field active" id="fundraisingStageField">
+                        <label>Fundraising Stage</label>
+                        <input type="text" value="Seed" placeholder="e.g., Pre-Seed, Seed, Series A" />
+                    </div>
+                </div>
+            </section>
+            
+            <!-- External Links Section -->
+            <section id="links" class="section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <span class="material-icons">link</span>
+                    </div>
+                    <h2 class="section-title">External Links</h2>
+                </div>
+                
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>LinkedIn</label>
+                        <input type="url" value="https://linkedin.com/company/acme-innovations" placeholder="https://linkedin.com/company/..." />
+                    </div>
+                    <div class="form-group">
+                        <label>Crunchbase</label>
+                        <input type="url" placeholder="https://crunchbase.com/organization/..." />
+                    </div>
+                    <div class="form-group">
+                        <label>Pitchbook</label>
+                        <input type="url" placeholder="https://pitchbook.com/profiles/..." />
+                    </div>
+                    <div class="form-group">
+                        <label>Press Release</label>
+                        <input type="url" placeholder="https://..." />
+                        <p class="helper-text">Link to your most recent press coverage or announcement</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button class="btn btn-secondary">Cancel</button>
+                <button class="btn btn-primary" id="saveBtn">
+                    <span class="material-icons">save</span>
+                    Save Changes
+                </button>
+            </div>
+        </main>
+    </div>
+    
+    <script>
+        // Company dropdown toggle
+        function toggleCompanyDropdown() {
+            const trigger = document.querySelector('.company-dropdown-trigger');
+            const menu = document.getElementById('companyMenu');
+            trigger.classList.toggle('open');
+            menu.classList.toggle('open');
+        }
+        
+        document.addEventListener('click', function(event) {
+            const dropdown = document.querySelector('.company-dropdown');
+            if (!dropdown.contains(event.target)) {
+                document.querySelector('.company-dropdown-trigger').classList.remove('open');
+                document.getElementById('companyMenu').classList.remove('open');
+            }
+        });
+        
+        // Select company
+        function selectCompany(id, initial, name, role, canEdit) {
+            document.getElementById('selectedLogo').textContent = initial;
+            document.getElementById('selectedName').textContent = name;
+            document.getElementById('selectedRole').textContent = role;
+            
+            // Update dropdown selection
+            document.querySelectorAll('.company-option').forEach(opt => {
+                opt.classList.remove('selected');
+                opt.querySelector('.company-option-check').innerHTML = '';
+            });
+            event.currentTarget.classList.add('selected');
+            event.currentTarget.querySelector('.company-option-check').innerHTML = '<span class="material-icons">check</span>';
+            
+            // Update permission indicator
+            const indicator = document.getElementById('permissionIndicator');
+            if (canEdit) {
+                indicator.className = 'permission-indicator';
+                indicator.innerHTML = '<span class="material-icons">edit</span> You can edit this company';
+            } else {
+                indicator.className = 'permission-indicator readonly';
+                indicator.innerHTML = '<span class="material-icons">visibility</span> View-only access';
+            }
+            
+            // Toggle read-only mode
+            const readonlyNotice = document.getElementById('readonlyNotice');
+            const formInputs = document.querySelectorAll('.main-form input:not([type="checkbox"]), .main-form select, .main-form textarea');
+            
+            if (canEdit) {
+                readonlyNotice.classList.remove('visible');
+                formInputs.forEach(input => input.disabled = false);
+                document.getElementById('saveBtn').disabled = false;
+                document.getElementById('uploadBtn').disabled = false;
+                document.getElementById('isFundraising').disabled = false;
+            } else {
+                readonlyNotice.classList.add('visible');
+                formInputs.forEach(input => input.disabled = true);
+                document.getElementById('saveBtn').disabled = true;
+                document.getElementById('uploadBtn').disabled = true;
+                document.getElementById('isFundraising').disabled = true;
+            }
+            
+            // Close dropdown
+            document.querySelector('.company-dropdown-trigger').classList.remove('open');
+            document.getElementById('companyMenu').classList.remove('open');
+        }
+        
+        // Scroll to section
+        function scrollToSection(event, sectionId) {
+            event.preventDefault();
+            
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        // Toggle fundraising
+        function toggleFundraising() {
+            const checkbox = document.getElementById('isFundraising');
+            const field = document.getElementById('fundraisingStageField');
+            
+            // Toggle will happen naturally, we just need to update the conditional field
+            setTimeout(() => {
+                if (checkbox.checked) {
+                    field.classList.add('active');
+                } else {
+                    field.classList.remove('active');
+                }
+            }, 0);
+        }
+        
+        // Character count
+        document.getElementById('description').addEventListener('input', function() {
+            document.getElementById('descCharCount').textContent = this.value.length;
+        });
+        
+        // Update active nav on scroll
+        const sections = document.querySelectorAll('.section[id]');
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                if (scrollY >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('href').substring(1) === current) {
+                    link.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Option C - Modal/Drawer</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%23EAB308' width='100' height='100'/><text x='50' y='72' font-size='70' font-weight='bold' text-anchor='middle' fill='white'>3</text></svg>">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #e8e8e8;
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        body.drawer-open {
+            overflow: hidden;
+        }
+        
+        /* Header */
+        .header {
+            background-color: white;
+            padding: 16px 32px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .logo-accent {
+            color: #39C463;
+        }
+        
+        .avatar-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border: 2px solid #39C463;
+        }
+        
+        .avatar-button .material-icons {
+            color: #666;
+            font-size: 24px;
+        }
+        
+        /* Approach Label */
+        .approach-label {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 12px 32px;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .approach-label .material-icons {
+            font-size: 20px;
+        }
+        
+        /* Page Header */
+        .page-header {
+            background: #000;
+            color: white;
+            padding: 48px 32px;
+        }
+        
+        .page-title {
+            font-size: 42px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            max-width: 1400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .page-accent {
+            color: #39C463;
+        }
+        
+        .page-subtitle {
+            font-size: 16px;
+            color: #999;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Main Tabs */
+        .main-tabs-wrapper {
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            position: sticky;
+            top: 72px;
+            z-index: 90;
+        }
+        
+        .main-tabs {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            padding: 0 32px;
+        }
+        
+        .main-tab {
+            padding: 18px 24px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.2s;
+            background: transparent;
+            border-left: none;
+            border-right: none;
+            border-top: none;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .main-tab:hover {
+            color: #39C463;
+        }
+        
+        .main-tab.active {
+            color: #39C463;
+            border-bottom-color: #39C463;
+        }
+        
+        /* Content Layout */
+        .content-area {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px;
+            display: flex;
+            gap: 32px;
+            align-items: flex-start;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            flex-shrink: 0;
+            position: sticky;
+            top: 140px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+        
+        .company-selector {
+            padding: 20px;
+            border-bottom: 1px solid #f0f0f0;
+            background: #fafafa;
+        }
+        
+        .company-selector-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #999;
+            margin-bottom: 12px;
+        }
+        
+        .company-display {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+        }
+        
+        .company-logo-small {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        
+        .company-display-info {
+            flex: 1;
+        }
+        
+        .company-display-name {
+            font-weight: 600;
+            font-size: 13px;
+            color: #333;
+        }
+        
+        .company-display-role {
+            font-size: 11px;
+            color: #666;
+        }
+        
+        /* Section Navigation */
+        .section-nav {
+            padding: 20px;
+        }
+        
+        .section-nav-label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #999;
+            margin-bottom: 12px;
+        }
+        
+        .nav-list {
+            list-style: none;
+        }
+        
+        .nav-item {
+            margin-bottom: 4px;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            color: #666;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        
+        .nav-link:hover {
+            background: #f5f5f5;
+            color: #39C463;
+        }
+        
+        .nav-link.active {
+            background: rgba(57, 196, 99, 0.1);
+            color: #39C463;
+            border-left-color: #39C463;
+        }
+        
+        .nav-link .material-icons {
+            font-size: 18px;
+        }
+        
+        /* Main Form */
+        .main-form {
+            flex: 1;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            padding: 40px;
+        }
+        
+        .section {
+            margin-bottom: 48px;
+            scroll-margin-top: 160px;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(57, 196, 99, 0.1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .section-icon .material-icons {
+            font-size: 22px;
+            color: #39C463;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        /* Form Elements */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 0;
+        }
+        
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #333;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #39C463;
+            box-shadow: 0 0 0 3px rgba(57, 196, 99, 0.1);
+        }
+        
+        /* Team Preview Card - The Key Component */
+        .team-preview-card {
+            background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%);
+            border: 2px solid #e8e8e8;
+            border-radius: 12px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .team-preview-card:hover {
+            border-color: #39C463;
+            box-shadow: 0 4px 12px rgba(57, 196, 99, 0.1);
+        }
+        
+        .team-preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .team-preview-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+        }
+        
+        .team-preview-title .material-icons {
+            color: #39C463;
+        }
+        
+        .team-preview-count {
+            background: #39C463;
+            color: white;
+            font-size: 11px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 12px;
+        }
+        
+        .team-preview-avatars {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .team-preview-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            border: 3px solid white;
+            margin-left: -12px;
+        }
+        
+        .team-preview-avatar:first-child {
+            margin-left: 0;
+        }
+        
+        .team-preview-avatar.more {
+            background: #e0e0e0;
+            color: #666;
+            font-size: 11px;
+        }
+        
+        .team-preview-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            color: #39C463;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .team-preview-link .material-icons {
+            font-size: 16px;
+        }
+        
+        /* Form Actions */
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 40px;
+            padding-top: 24px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.2s;
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #666;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .btn-secondary:hover {
+            background: #f5f5f5;
+        }
+        
+        .btn-primary {
+            background: #39C463;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2ea552;
+        }
+        
+        .btn .material-icons {
+            font-size: 18px;
+        }
+        
+        /* Approach Info */
+        .approach-info {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+        
+        .approach-info h3 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .approach-info p {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .approach-info ul {
+            margin-top: 12px;
+            margin-left: 20px;
+        }
+        
+        .approach-info li {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        
+        .approach-info .pros { color: #2a9d4e; }
+        .approach-info .cons { color: #dc3545; }
+        
+        /* DRAWER OVERLAY */
+        .drawer-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 200;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+        
+        .drawer-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* DRAWER */
+        .drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: 600px;
+            max-width: 100%;
+            height: 100vh;
+            background: white;
+            z-index: 201;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .drawer.open {
+            transform: translateX(0);
+        }
+        
+        .drawer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid #f0f0f0;
+            background: #fafafa;
+        }
+        
+        .drawer-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+            font-weight: 700;
+        }
+        
+        .drawer-title .material-icons {
+            color: #39C463;
+        }
+        
+        .drawer-close {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .drawer-close:hover {
+            background: #f5f5f5;
+        }
+        
+        .drawer-close .material-icons {
+            color: #666;
+        }
+        
+        .drawer-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+        
+        .drawer-actions-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .drawer-stats {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .drawer-stats strong {
+            color: #39C463;
+        }
+        
+        .btn-add-member {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 16px;
+            background: #39C463;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .btn-add-member:hover {
+            background: #2ea552;
+        }
+        
+        .btn-add-member .material-icons {
+            font-size: 18px;
+        }
+        
+        /* Team Members in Drawer */
+        .drawer-team-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .drawer-member-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: #fafafa;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .drawer-member-card:hover {
+            border-color: #e0e0e0;
+        }
+        
+        .drawer-member-card.past {
+            opacity: 0.6;
+        }
+        
+        .member-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        
+        .member-info {
+            flex: 1;
+            min-width: 0;
+        }
+        
+        .member-name {
+            font-weight: 600;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+        
+        .member-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .member-role-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 2px 8px;
+            background: rgba(57, 196, 99, 0.1);
+            color: #2a9d4e;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .member-role-badge.ceo {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+        
+        .member-role-badge.cto {
+            background: rgba(240, 147, 251, 0.1);
+            color: #d53f8c;
+        }
+        
+        .member-email {
+            font-size: 12px;
+            color: #888;
+        }
+        
+        .member-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .member-status.active {
+            color: #2a9d4e;
+        }
+        
+        .member-status.past {
+            color: #666;
+        }
+        
+        .member-status .material-icons {
+            font-size: 14px;
+        }
+        
+        .member-actions {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .btn-icon-sm {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .btn-icon-sm:hover {
+            background: #f5f5f5;
+            border-color: #39C463;
+        }
+        
+        .btn-icon-sm .material-icons {
+            font-size: 16px;
+            color: #666;
+        }
+        
+        .btn-icon-sm:hover .material-icons {
+            color: #39C463;
+        }
+        
+        .btn-icon-sm.danger:hover {
+            border-color: #dc3545;
+            background: #fff5f5;
+        }
+        
+        .btn-icon-sm.danger:hover .material-icons {
+            color: #dc3545;
+        }
+        
+        /* Past Members Divider in Drawer */
+        .drawer-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 24px 0 16px;
+            cursor: pointer;
+        }
+        
+        .drawer-divider .line {
+            flex: 1;
+            height: 1px;
+            background: #e0e0e0;
+        }
+        
+        .drawer-divider .label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #999;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .drawer-divider .material-icons {
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+        
+        .drawer-divider.collapsed .material-icons {
+            transform: rotate(-90deg);
+        }
+        
+        .past-members-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .past-members-list.hidden {
+            display: none;
+        }
+        
+        /* Drawer Footer */
+        .drawer-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #f0f0f0;
+            background: #fafafa;
+        }
+        
+        .drawer-footer-note {
+            font-size: 12px;
+            color: #666;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">techstars<span class="logo-accent">_</span></div>
+        <div class="avatar-button">
+            <span class="material-icons">person</span>
+        </div>
+    </header>
+    
+    <!-- Approach Label -->
+    <div class="approach-label">
+        <span class="material-icons">lightbulb</span>
+        Option C: Modal/Drawer — Team preview in form, full management in slide-out drawer
+    </div>
+    
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1 class="page-title">Edit Company<span class="page-accent">_</span></h1>
+        <p class="page-subtitle">Manage company information and team members</p>
+    </div>
+    
+    <!-- Main Tabs -->
+    <div class="main-tabs-wrapper">
+        <div class="main-tabs">
+            <button class="main-tab">Profile</button>
+            <button class="main-tab active">Companies</button>
+            <button class="main-tab">Mentorship</button>
+        </div>
+    </div>
+    
+    <!-- Content -->
+    <div class="content-area">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="company-selector">
+                <div class="company-selector-label">Editing Company</div>
+                <div class="company-display">
+                    <div class="company-logo-small">A</div>
+                    <div class="company-display-info">
+                        <div class="company-display-name">Acme Innovations Inc.</div>
+                        <div class="company-display-role">You are CEO</div>
+                    </div>
+                </div>
+            </div>
+            
+            <nav class="section-nav">
+                <div class="section-nav-label">Jump to Section</div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="#identity" class="nav-link active" onclick="scrollToSection(event, 'identity')">
+                            <span class="material-icons">fingerprint</span>
+                            Identity
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#overview" class="nav-link" onclick="scrollToSection(event, 'overview')">
+                            <span class="material-icons">info</span>
+                            Overview
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#team" class="nav-link" onclick="scrollToSection(event, 'team')">
+                            <span class="material-icons">groups</span>
+                            Team
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#business" class="nav-link" onclick="scrollToSection(event, 'business')">
+                            <span class="material-icons">analytics</span>
+                            Business Details
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#social" class="nav-link" onclick="scrollToSection(event, 'social')">
+                            <span class="material-icons">share</span>
+                            Social Links
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+        
+        <!-- Main Form -->
+        <main class="main-form">
+            <!-- Approach Info -->
+            <div class="approach-info">
+                <h3>🎯 Option C: Modal/Drawer</h3>
+                <p>Form stays clean with a team preview card. Click "Manage Team →" to open a slide-out drawer with full CRUD capabilities.</p>
+                <ul>
+                    <li class="pros">✓ Doesn't clutter the main form</li>
+                    <li class="pros">✓ Team management feels like a distinct action</li>
+                    <li class="pros">✓ Familiar pattern from tools like Notion/Linear</li>
+                    <li class="cons">✗ Context switch (drawer obscures main content)</li>
+                    <li class="cons">✗ Two separate save states could confuse users</li>
+                </ul>
+            </div>
+            
+            <!-- Identity Section -->
+            <section id="identity" class="section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <span class="material-icons">fingerprint</span>
+                    </div>
+                    <h2 class="section-title">Identity</h2>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Name (DBA) *</label>
+                        <input type="text" value="Acme Innovations Inc." />
+                    </div>
+                    <div class="form-group">
+                        <label>Name (Legal)</label>
+                        <input type="text" value="Acme Innovations Incorporated" disabled />
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Overview Section -->
+            <section id="overview" class="section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <span class="material-icons">info</span>
+                    </div>
+                    <h2 class="section-title">Overview</h2>
+                </div>
+                <div class="form-group full-width">
+                    <label>Brief Description</label>
+                    <textarea rows="3">Building the future of sustainable energy solutions for residential homes.</textarea>
+                </div>
+                <div class="form-grid" style="margin-top: 16px;">
+                    <div class="form-group">
+                        <label>Website</label>
+                        <input type="url" value="https://acme-innovations.com" />
+                    </div>
+                    <div class="form-group">
+                        <label>Headquarters</label>
+                        <input type="text" value="Denver, Colorado, United States" />
+                    </div>
+                </div>
+            </section>
+            
+            <!-- TEAM PREVIEW CARD - The Key Component -->
+            <section id="team" class="section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <span class="material-icons">groups</span>
+                    </div>
+                    <h2 class="section-title">Team</h2>
+                </div>
+                
+                <div class="team-preview-card" onclick="openDrawer()">
+                    <div class="team-preview-header">
+                        <div class="team-preview-title">
+                            <span class="material-icons">people</span>
+                            Team Members
+                        </div>
+                        <div class="team-preview-count">4 members</div>
+                    </div>
+                    
+                    <div class="team-preview-avatars">
+                        <div class="team-preview-avatar">CJ</div>
+                        <div class="team-preview-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">MK</div>
+                        <div class="team-preview-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">SR</div>
+                        <div class="team-preview-avatar more">+1</div>
+                    </div>
+                    
+                    <span class="team-preview-link">
+                        Manage Team
+                        <span class="material-icons">arrow_forward</span>
+                    </span>
+                </div>
+            </section>
+            
+            <!-- Business Details Section -->
+            <section id="business" class="section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <span class="material-icons">analytics</span>
+                    </div>
+                    <h2 class="section-title">Business Details</h2>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Operating Status *</label>
+                        <select>
+                            <option selected>Capybara (Operating)</option>
+                            <option>Red Panda (Acquired)</option>
+                            <option>Quokka (Closed)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Funding Stage</label>
+                        <select>
+                            <option>Axolotl (Pre-Seed)</option>
+                            <option selected>Pangolin (Seed)</option>
+                            <option>Sloth (Series A)</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Social Links Section -->
+            <section id="social" class="section">
+                <div class="section-header">
+                    <div class="section-icon">
+                        <span class="material-icons">share</span>
+                    </div>
+                    <h2 class="section-title">Social Links</h2>
+                </div>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>LinkedIn</label>
+                        <input type="url" value="https://linkedin.com/company/acme" />
+                    </div>
+                    <div class="form-group">
+                        <label>Crunchbase</label>
+                        <input type="url" placeholder="https://crunchbase.com/organization/" />
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Form Actions -->
+            <div class="form-actions">
+                <button class="btn btn-secondary">Cancel</button>
+                <button class="btn btn-primary">
+                    <span class="material-icons">save</span>
+                    Save Changes
+                </button>
+            </div>
+        </main>
+    </div>
+    
+    <!-- DRAWER OVERLAY -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+    
+    <!-- DRAWER -->
+    <div class="drawer" id="drawer">
+        <div class="drawer-header">
+            <div class="drawer-title">
+                <span class="material-icons">groups</span>
+                Team Members
+            </div>
+            <button class="drawer-close" onclick="closeDrawer()">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+        
+        <div class="drawer-body">
+            <div class="drawer-actions-bar">
+                <div class="drawer-stats">
+                    <strong>3</strong> active · <strong>1</strong> past
+                </div>
+                <button class="btn-add-member">
+                    <span class="material-icons">person_add</span>
+                    Add Member
+                </button>
+            </div>
+            
+            <!-- Active Team Members -->
+            <div class="drawer-team-list">
+                <div class="drawer-member-card">
+                    <div class="member-avatar">CJ</div>
+                    <div class="member-info">
+                        <div class="member-name">Cyanne Jones</div>
+                        <div class="member-meta">
+                            <span class="member-role-badge ceo">CEO</span>
+                            <span class="member-status active">
+                                <span class="material-icons">check_circle</span>
+                                Active
+                            </span>
+                        </div>
+                        <div class="member-email">cyanne@acme-innovations.com</div>
+                    </div>
+                    <div class="member-actions">
+                        <button class="btn-icon-sm" title="Edit">
+                            <span class="material-icons">edit</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="drawer-member-card">
+                    <div class="member-avatar" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">MK</div>
+                    <div class="member-info">
+                        <div class="member-name">Marcus Kim</div>
+                        <div class="member-meta">
+                            <span class="member-role-badge cto">CTO</span>
+                            <span class="member-status active">
+                                <span class="material-icons">check_circle</span>
+                                Active
+                            </span>
+                        </div>
+                        <div class="member-email">marcus@acme-innovations.com</div>
+                    </div>
+                    <div class="member-actions">
+                        <button class="btn-icon-sm" title="Edit">
+                            <span class="material-icons">edit</span>
+                        </button>
+                        <button class="btn-icon-sm danger" title="Remove">
+                            <span class="material-icons">person_remove</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="drawer-member-card">
+                    <div class="member-avatar" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">SR</div>
+                    <div class="member-info">
+                        <div class="member-name">Sofia Rodriguez</div>
+                        <div class="member-meta">
+                            <span class="member-role-badge">Product Manager</span>
+                            <span class="member-status active">
+                                <span class="material-icons">check_circle</span>
+                                Active
+                            </span>
+                        </div>
+                        <div class="member-email">sofia@acme-innovations.com</div>
+                    </div>
+                    <div class="member-actions">
+                        <button class="btn-icon-sm" title="Edit">
+                            <span class="material-icons">edit</span>
+                        </button>
+                        <button class="btn-icon-sm danger" title="Remove">
+                            <span class="material-icons">person_remove</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Past Members -->
+            <div class="drawer-divider" onclick="togglePastMembers()">
+                <div class="line"></div>
+                <div class="label">
+                    <span class="material-icons">expand_more</span>
+                    Past Members (1)
+                </div>
+                <div class="line"></div>
+            </div>
+            
+            <div class="past-members-list" id="pastMembersList">
+                <div class="drawer-member-card past">
+                    <div class="member-avatar" style="background: #ccc;">JD</div>
+                    <div class="member-info">
+                        <div class="member-name">James Davis</div>
+                        <div class="member-meta">
+                            <span class="member-role-badge">Software Engineer</span>
+                            <span class="member-status past">
+                                <span class="material-icons">history</span>
+                                Past
+                            </span>
+                        </div>
+                        <div class="member-email">james.davis@email.com</div>
+                    </div>
+                    <div class="member-actions">
+                        <button class="btn-icon-sm" title="Edit">
+                            <span class="material-icons">edit</span>
+                        </button>
+                        <button class="btn-icon-sm" title="Reactivate">
+                            <span class="material-icons">person_add</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="drawer-footer">
+            <div class="drawer-footer-note">
+                Changes to team members are saved automatically
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        function openDrawer() {
+            document.getElementById('drawerOverlay').classList.add('open');
+            document.getElementById('drawer').classList.add('open');
+            document.body.classList.add('drawer-open');
+        }
+        
+        function closeDrawer() {
+            document.getElementById('drawerOverlay').classList.remove('open');
+            document.getElementById('drawer').classList.remove('open');
+            document.body.classList.remove('drawer-open');
+        }
+        
+        function scrollToSection(event, sectionId) {
+            event.preventDefault();
+            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        
+        function togglePastMembers() {
+            const divider = document.querySelector('.drawer-divider');
+            const list = document.getElementById('pastMembersList');
+            divider.classList.toggle('collapsed');
+            list.classList.toggle('hidden');
+        }
+        
+        // Update active nav on scroll
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('.section[id]');
+            let current = '';
+            sections.forEach(section => {
+                if (scrollY >= section.offsetTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.toggle('active', link.getAttribute('href') === '#' + current);
+            });
+        });
+        
+        // Close drawer with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeDrawer();
+            }
+        });
+    </script>
+</body>
+</html>
