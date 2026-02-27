@@ -1,0 +1,37 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Sidebar from '../components/Sidebar.astro';
+import { getPrototypeTree } from '../lib/prototypes';
+
+const tree = getPrototypeTree();
+const totalFiles = tree.reduce((sum, f) => sum + f.files.length, 0);
+---
+
+<Layout title="Home">
+  <div class="app-shell">
+    <Sidebar tree={tree} currentSlug="" />
+    <main class="home">
+      <div class="home-header">
+        <h1>HTML Library</h1>
+        <p>{totalFiles} prototypes across {tree.length} categories</p>
+      </div>
+      <div class="home-grid">
+        {tree.map(folder => (
+          <section class="home-section">
+            <h2>{folder.name}</h2>
+            <ul class="home-file-list">
+              {folder.files.map(file => (
+                <li>
+                  <a href={`/view/${file.slug}`} class="home-file-card">
+                    <span class="card-name">{file.name}</span>
+                    <span class="card-arrow">&rarr;</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+    </main>
+  </div>
+</Layout>
