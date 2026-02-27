@@ -1,12 +1,12 @@
 :root {
   --sidebar-width: 280px;
   --toolbar-height: 44px;
-  --color-bg: #f5f5f5;
-  --color-sidebar-bg: #1a1a2e;
-  --color-sidebar-text: #a0a0b0;
+  --color-bg: #f1dedc;
+  --color-sidebar-bg: #7D2E68;
+  --color-sidebar-text: #e0d4d9;
   --color-sidebar-active: #ffffff;
   --color-sidebar-hover-bg: rgba(255, 255, 255, 0.08);
-  --color-accent: #39C463;
+  --color-accent: #C97B84;
   --color-toolbar-bg: #ffffff;
   --color-border: #e2e2e2;
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
