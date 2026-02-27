@@ -1,0 +1,24 @@
+---
+import SidebarFolder from './SidebarFolder.astro';
+import type { PrototypeFolder } from '../lib/prototypes';
+
+interface Props {
+  tree: PrototypeFolder[];
+  currentSlug: string;
+}
+
+const { tree, currentSlug } = Astro.props;
+const totalFiles = tree.reduce((sum, f) => sum + f.files.length, 0);
+---
+
+<nav class="sidebar" aria-label="Prototype navigation">
+  <div class="sidebar-header">
+    <a href="/" class="sidebar-title">HTML Library</a>
+    <span class="sidebar-count">{totalFiles} prototypes</span>
+  </div>
+  <div class="sidebar-nav">
+    {tree.map(folder => (
+      <SidebarFolder folder={folder} currentSlug={currentSlug} />
+    ))}
+  </div>
+</nav>
