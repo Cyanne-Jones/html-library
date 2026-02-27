@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/Cyanne-Jones/html-library/issues"
   },
-  "homepage": "https://github.com/Cyanne-Jones/html-library#readme"
+  "homepage": "https://github.com/Cyanne-Jones/html-library#readme",
+  "dependencies": {
+    "astro": "^5.18.0"
+  }
 }
